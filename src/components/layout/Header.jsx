@@ -25,6 +25,7 @@ export default function Header({ currentPage, setCurrentPage }) {
     { label: 'History', action: () => setCurrentPage('about') },
     { label: 'Organogram', action: () => setCurrentPage('organogram') },
     { label: 'Careers', action: () => setCurrentPage('careers') },
+    { label: 'Projects', action: () => setCurrentPage('projects') },
   ];
 
   const mandateMenu = [
@@ -59,6 +60,8 @@ export default function Header({ currentPage, setCurrentPage }) {
         { label: 'bwCIRT (Cybersecurity)', action: () => setCurrentPage('bwcirt') },
         { label: 'Postal Services', action: () => setCurrentPage('postal') },
         { label: 'Reports Library', action: () => setCurrentPage('reports') },
+        { label: 'QoS Monitoring', action: () => setCurrentPage('qos') },
+        { label: 'Type Approval', action: () => setCurrentPage('type-approval') },
       ],
     },
     {

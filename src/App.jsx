@@ -21,6 +21,9 @@ import BroadcastingPage from './pages/BroadcastingPage';
 import InternetPage from './pages/InternetPage';
 import CareersPage from './pages/CareersPage';
 import OrganogramPage from './pages/OrganogramPage';
+import QoSPage from './pages/QoSPage';
+import ProjectsPage from './pages/ProjectsPage';
+import TypeApprovalPage from './pages/TypeApprovalPage';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -94,6 +97,12 @@ function AppContent() {
         return <CareersPage />;
       case 'organogram':
         return <OrganogramPage />;
+      case 'qos':
+        return <QoSPage />;
+      case 'projects':
+        return <ProjectsPage />;
+      case 'type-approval':
+        return <TypeApprovalPage />;
       default:
         return <Homepage setCurrentPage={setCurrentPage} />;
     }
