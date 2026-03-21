@@ -1,0 +1,574 @@
+import { useState } from 'react';
+import { 
+  ArrowRight, Users, Building2, Briefcase, Search, TrendingUp, FileText, 
+  ChevronRight, Phone, Mail, Globe, Shield, Wifi, Radio, Lock, CheckCircle,
+  Bell, Clock, Zap, BarChart3, MapPin, Package, AlertTriangle, MessageCircle,
+  Eye, Type, Contrast, SkipForward, X, Send
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+export default function Homepage({ setCurrentPage }) {
+  const { login } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('consumer');
+  const [newsFilter, setNewsFilter] = useState('all');
+  const [showChatbot, setShowChatbot] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, type: 'bot', text: 'Hello! I\'m BOTSI, your BOCRA assistant. How can I help you today?' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [accessibility, setAccessibility] = useState({
+    highContrast: false,
+    textSize: 'normal',
+    screenReader: false
+  });
+  const [domainCheck, setDomainCheck] = useState('');
+  const [domainResult, setDomainResult] = useState(null);
+  const [quickComplaintCategory, setQuickComplaintCategory] = useState('');
+
+  const services = [
+    { id: 'telecom', name: 'Telecommunications', icon: Phone, color: 'bg-[#002B7F]', description: 'Voice & Data Services' },
+    { id: 'broadcasting', name: 'Broadcasting', icon: Radio, color: 'bg-[#2DD4BF]', description: 'Radio & TV' },
+    { id: 'postal', name: 'Postal Services', icon: Package, color: 'bg-[#F97316]', description: 'Courier & Mail' },
+    { id: 'internet', name: 'Internet Services', icon: Wifi, color: 'bg-purple-500', description: 'ISP & Broadband' },
+    { id: 'cybersecurity', name: 'Cybersecurity', icon: Lock, color: 'bg-red-500', description: 'bwCIRT' },
+    { id: 'typeapproval', name: 'Type Approval', icon: CheckCircle, color: 'bg-yellow-500', description: 'Device Certification' },
+    { id: 'license', name: 'License Verify', icon: Shield, color: 'bg-green-500', description: 'Verify License' },
+    { id: 'domain', name: '.bw Domain', icon: Globe, color: 'bg-indigo-500', description: 'Domain Register' },
+  ];
+
+  const consumerTools = [
+    { id: 'tariff', name: 'Tariff Compare', icon: TrendingUp, desc: 'Compare mobile & internet plans' },
+    { id: 'channel', name: 'Channel Optimizer', icon: BarChart3, desc: 'AI-powered bouquet suggestions' },
+    { id: 'speed', name: 'Speed Test', icon: Zap, desc: 'Test your internet speed' },
+    { id: 'mnp', name: 'Number Portability', icon: Phone, desc: 'Keep your number when switching' },
+  ];
+
+  const news = [
+    { id: 1, category: 'news', date: 'March 15, 2024', title: 'BOCRA Launches New Online Licensing Portal', excerpt: 'The new portal provides a streamlined experience for license applicants.' },
+    { id: 2, category: 'speech', date: 'March 12, 2024', title: 'Keynote Address: Digital Transformation in Botswana', excerpt: 'CEO discusses the future of communications sector.' },
+    { id: 3, category: 'statement', date: 'March 10, 2024', title: 'Statement on Spectrum Allocation', excerpt: 'BOCRA announces new spectrum allocation guidelines.' },
+    { id: 4, category: 'news', date: 'March 8, 2024', title: 'New Consumer Protection Guidelines Effective', excerpt: 'Updated guidelines aim to strengthen consumer rights.' },
+    { id: 5, category: 'news', date: 'March 5, 2024', title: 'Botswana Internet Penetration Reaches 67.5%', excerpt: 'A significant increase from 61.3% in the previous year.' },
+    { id: 6, category: 'statement', date: 'March 1, 2024', title: 'Regulatory Update on 5G Rollout', excerpt: 'Guidelines for 5G network deployment in Botswana.' },
+  ];
+
+  const complaintCategories = [
+    'Network Quality', 'Billing Dispute', 'Customer Service', 
+    'Service Interruption', 'Data Privacy', 'Contract Issues'
+  ];
+
+  const filteredNews = newsFilter === 'all' ? news : news.filter(n => n.category === newsFilter);
+
+  const handleDomainCheck = () => {
+    if (!domainCheck.trim()) return;
+    setDomainResult({
+      available: Math.random() > 0.5,
+      domain: domainCheck
+    });
+  };
+
+  const handleSendMessage = () => {
+    if (!chatInput.trim()) return;
+    const newMessages = [
+      ...chatMessages,
+      { id: Date.now(), type: 'user', text: chatInput }
+    ];
+    setChatMessages(newMessages);
+    setChatInput('');
+    
+    setTimeout(() => {
+      setChatMessages(prev => [...prev, { 
+        id: Date.now() + 1, 
+        type: 'bot', 
+        text: 'Thank you for your message. A customer service representative will respond shortly. For immediate assistance, you can call +267 368 5100.' 
+      }]);
+    }, 1000);
+  };
+
+  const handleQuickComplaint = (category) => {
+    setQuickComplaintCategory(category);
+    setCurrentPage('complaints');
+  };
+
+  const handleRoleSelect = (roleId) => {
+    login(roleId);
+    setCurrentPage(roleId);
+  };
+
+  return (
+    <div className={`animate-fade-in ${accessibility.highContrast ? 'high-contrast' : ''}`}>
+      {/* Top Bar */}
+      <div className="bg-[#002B7F] text-white text-sm">
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-4">
+              <button className="hover:text-[#2DD4BF] transition-colors">Documents</button>
+              <span className="text-white/30">|</span>
+              <button onClick={() => setCurrentPage('complaints')} className="hover:text-[#2DD4BF] transition-colors">Complaints</button>
+              <span className="text-white/30">|</span>
+              <button className="hover:text-[#2DD4BF] transition-colors">About Site</button>
+              <span className="text-white/30">|</span>
+              <button onClick={() => setCurrentPage('tenders')} className="hover:text-[#2DD4BF] transition-colors">Tenders</button>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <button className="flex items-center gap-1 hover:text-[#2DD4BF] transition-colors">
+                <Lock size={14} />
+                ASMS-WebCP (Login)
+              </button>
+              <span className="text-white/30">|</span>
+              <button className="hover:text-[#2DD4BF] transition-colors">License Verification</button>
+              <span className="text-white/30">|</span>
+              <button className="hover:text-[#2DD4BF] transition-colors">Type Approval</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* User Segmentation Tabs */}
+      <div className="bg-gray-50 border-b">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex gap-1">
+            {['consumer', 'licensee', 'staff', 'researcher'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-3 font-medium capitalize transition-colors ${
+                  activeTab === tab 
+                    ? 'bg-[#002B7F] text-white' 
+                    : 'text-gray-600 hover:text-[#002B7F] hover:bg-gray-100'
+                }`}
+              >
+                {tab === 'consumer' ? 'Consumer' : tab === 'licensee' ? 'Licensee' : tab === 'staff' ? 'Staff' : 'Researcher'}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-[#002B7F] via-[#1a4a9e] to-[#2DD4BF] overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#grid)" />
+          </svg>
+        </div>
+        
+        <div className="absolute top-20 left-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-20 w-96 h-96 bg-[#2DD4BF]/20 rounded-full blur-3xl"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 py-16 lg:py-24">
+          <div className="text-center text-white mb-8">
+            <h1 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
+              Connecting Botswana,<br />Empowering You
+            </h1>
+            <p className="text-lg lg:text-xl text-white/90 max-w-3xl mx-auto">
+              The Botswana Communications Regulatory Authority - your gateway to reliable, fair, and innovative communications services.
+            </p>
+          </div>
+
+          {/* Prominent Search Bar */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search for services, forms, or information..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 rounded-xl border-0 shadow-lg focus:outline-none focus:ring-4 focus:ring-[#2DD4BF]/30 text-lg"
+              />
+            </div>
+          </div>
+
+          {/* Quick Action Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { label: 'File Complaint', icon: FileText, action: () => handleQuickComplaint('') },
+              { label: 'Apply for License', icon: Shield, action: () => setCurrentPage('licensing') },
+              { label: 'Check Status', icon: Clock, action: () => setCurrentPage('complaints') },
+              { label: 'Register .bw', icon: Globe, action: () => {} },
+            ].map((action, idx) => (
+              <button
+                key={idx}
+                onClick={action.action}
+                className="flex flex-col items-center gap-2 p-4 bg-white/10 backdrop-blur rounded-xl hover:bg-white/20 transition-all"
+              >
+                <action.icon size={24} className="text-white" />
+                <span className="text-sm font-medium text-white">{action.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
+          </svg>
+        </div>
+      </section>
+
+      {/* Service Cards Grid */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-[#1E293B] mb-8 text-center">Our Services</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {services.map((service) => (
+              <button
+                key={service.id}
+                onClick={() => service.id === 'cybersecurity' ? setCurrentPage('bwcirt') : service.id === 'postal' ? setCurrentPage('postal') : {}}
+                className="group p-6 bg-white border-2 border-gray-100 rounded-xl hover:border-[#2DD4BF] hover:shadow-lg transition-all text-left"
+              >
+                <div className={`w-12 h-12 ${service.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <service.icon size={24} className="text-white" />
+                </div>
+                <h3 className="font-semibold text-[#1E293B] mb-1">{service.name}</h3>
+                <p className="text-sm text-gray-500">{service.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Consumer Tools Showcase */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-[#1E293B]">Consumer Tools</h2>
+            <button onClick={() => handleRoleSelect('citizen')} className="text-[#002B7F] font-medium flex items-center gap-1 hover:gap-2 transition-all">
+              View All <ArrowRight size={18} />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {consumerTools.map((tool) => (
+              <div key={tool.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 bg-[#F97316] rounded-lg flex items-center justify-center mb-4">
+                  <tool.icon size={24} className="text-white" />
+                </div>
+                <h3 className="font-semibold text-[#1E293B] mb-2">{tool.name}</h3>
+                <p className="text-sm text-gray-500">{tool.desc}</p>
+                <button className="mt-4 text-[#002B7F] text-sm font-medium flex items-center gap-1 hover:gap-2 transition-all">
+                  Launch Tool <ArrowRight size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Live Statistics Dashboard */}
+      <section className="py-12 bg-[#002B7F] text-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center gap-2 mb-8">
+            <TrendingUp className="text-[#2DD4BF]" />
+            <h2 className="text-2xl font-bold">Live Statistics</h2>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { value: '1,247', label: 'Active Licenses', trend: '+12' },
+              { value: '12,450', label: 'Complaints Resolved', trend: '+89' },
+              { value: '24,589', label: '.bw Domains', trend: '+156' },
+              { value: '67.5%', label: 'Internet Penetration', trend: '+2.1%' },
+            ].map((stat, idx) => (
+              <div key={idx} className="bg-white/10 backdrop-blur rounded-xl p-6">
+                <div className="text-3xl lg:text-4xl font-bold mb-2">{stat.value}</div>
+                <div className="flex items-center justify-between">
+                  <div className="text-white/80">{stat.label}</div>
+                  <div className="text-[#2DD4BF] text-sm font-medium">{stat.trend}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* News Section with Filter Tabs */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <h2 className="text-2xl font-bold text-[#1E293B]">Latest News & Updates</h2>
+            <div className="flex gap-2">
+              {['all', 'news', 'speech', 'statement'].map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setNewsFilter(filter)}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                    newsFilter === filter
+                      ? 'bg-[#002B7F] text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {filter === 'all' ? 'All' : filter === 'news' ? 'News Releases' : filter === 'speech' ? 'Speeches' : 'Statements'}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredNews.map((item) => (
+              <article key={item.id} className="border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="h-40 bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center">
+                  <TrendingUp size={40} className="text-white/50" />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                    <span className="text-[#2DD4BF] font-medium capitalize">{item.category}</span>
+                    <span>•</span>
+                    <span>{item.date}</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-[#1E293B] mb-2">{item.title}</h3>
+                  <p className="text-gray-600 text-sm">{item.excerpt}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Complaint Filing */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-[#002B7F] to-[#1a4a9e] rounded-2xl p-8 text-white">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-2">Quick Complaint Filing</h2>
+              <p className="text-white/80">Select a category to file your complaint quickly</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {complaintCategories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleQuickComplaint(category)}
+                  className="p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors text-left"
+                >
+                  <AlertTriangle size={20} className="text-[#2DD4BF] mb-2" />
+                  <div className="font-medium">{category}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* License Application Preview */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-[#1E293B] mb-4">Apply for a License</h2>
+              <p className="text-gray-600 mb-6">
+                Streamlined online license application process. Apply for telecommunications, broadcasting, ISP, or Value Added Services licenses.
+              </p>
+              <div className="space-y-4">
+                {[
+                  { step: 1, title: 'Submit Application', desc: 'Fill in company and license details' },
+                  { step: 2, title: 'Upload Documents', desc: 'Provide required documentation' },
+                  { step: 3, title: 'Make Payment', desc: 'Pay application fees securely' },
+                  { step: 4, title: 'Get Approval', desc: 'Receive your license certificate' },
+                ].map((item) => (
+                  <div key={item.step} className="flex gap-4">
+                    <div className="w-10 h-10 bg-[#002B7F] text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                      {item.step}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-[#1E293B]">{item.title}</div>
+                      <div className="text-sm text-gray-500">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button 
+                onClick={() => setCurrentPage('licensing')}
+                className="mt-8 px-6 py-3 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors inline-flex items-center gap-2"
+              >
+                Start Application <ArrowRight size={18} />
+              </button>
+            </div>
+            <div className="bg-gray-50 rounded-xl p-8">
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="font-semibold text-[#1E293B] mb-4">License Categories</h3>
+                <div className="space-y-3">
+                  {['Telecommunications Service', 'Internet Service Provider', 'Value Added Services', 'Broadcasting'].map((cat) => (
+                    <div key={cat} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <CheckCircle size={18} className="text-green-500" />
+                      <span className="text-sm">{cat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Domain Registration Checker */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="max-w-xl mx-auto text-center">
+            <h2 className="text-2xl font-bold text-[#1E293B] mb-4">Check .bw Domain Availability</h2>
+            <p className="text-gray-600 mb-6">
+              Search for your perfect .bw domain name for your business or personal use.
+            </p>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                placeholder="Enter domain name"
+                value={domainCheck}
+                onChange={(e) => setDomainCheck(e.target.value)}
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#2DD4BF]"
+              />
+              <button
+                onClick={handleDomainCheck}
+                className="px-6 py-3 bg-[#002B7F] text-white rounded-lg font-medium hover:bg-[#1a4a9e] transition-colors"
+              >
+                Check
+              </button>
+            </div>
+            {domainResult && (
+              <div className={`mt-4 p-4 rounded-lg ${domainResult.available ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                {domainResult.available 
+                  ? `✅ ${domainResult.domain}.bw is available!` 
+                  : `❌ ${domainResult.domain}.bw is already taken.`}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Latest Tickers */}
+      <section className="bg-[#002B7F] text-white py-3 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">
+          <span className="flex-shrink-0 px-3 py-1 bg-[#F97316] rounded text-sm font-semibold">LATEST TENDERS</span>
+          <div className="flex-1 overflow-hidden">
+            <div className="flex animate-[ticker_20s_linear_infinite]">
+              {[
+                { id: 'TND-001', title: 'Network Equipment Supply', closing: '2024-04-15' },
+                { id: 'TND-002', title: 'Consultancy Services', closing: '2024-04-20' },
+                { id: 'TND-003', title: 'Office Fit-out Project', closing: '2024-03-01' },
+              ].map((tender, idx) => (
+                <span key={idx} className="mx-8 text-sm whitespace-nowrap">
+                  {tender.id} - {tender.title} (Closing: {tender.closing})
+                </span>
+              ))}
+              {[
+                { id: 'TND-001', title: 'Network Equipment Supply', closing: '2024-04-15' },
+                { id: 'TND-002', title: 'Consultancy Services', closing: '2024-04-20' },
+                { id: 'TND-003', title: 'Office Fit-out Project', closing: '2024-03-01' },
+              ].map((tender, idx) => (
+                <span key={`dup-${idx}`} className="mx-8 text-sm whitespace-nowrap">
+                  {tender.id} - {tender.title} (Closing: {tender.closing})
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Accessibility Toolbar (Floating Left) */}
+      <div className="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-white shadow-xl rounded-r-xl overflow-hidden">
+        <div className="flex flex-col">
+          <button 
+            onClick={() => document.body.scrollIntoView({ behavior: 'smooth' })}
+            className="p-3 hover:bg-gray-100 border-b border-gray-100"
+            title="Skip to content"
+          >
+            <SkipForward size={20} className="text-[#002B7F]" />
+          </button>
+          <button 
+            onClick={() => setAccessibility(prev => ({ ...prev, screenReader: !prev.screenReader }))}
+            className={`p-3 hover:bg-gray-100 border-b border-gray-100 ${accessibility.screenReader ? 'bg-[#2DD4BF]/20' : ''}`}
+            title="Screen reader mode"
+          >
+            <Eye size={20} className="text-[#002B7F]" />
+          </button>
+          <button 
+            onClick={() => setAccessibility(prev => ({ 
+              ...prev, 
+              textSize: prev.textSize === 'normal' ? 'large' : prev.textSize === 'large' ? 'extra-large' : 'normal'
+            }))}
+            className="p-3 hover:bg-gray-100 border-b border-gray-100"
+            title="Text size"
+          >
+            <Type size={20} className="text-[#002B7F]" />
+          </button>
+          <button 
+            onClick={() => setAccessibility(prev => ({ ...prev, highContrast: !prev.highContrast }))}
+            className={`p-3 hover:bg-gray-100 ${accessibility.highContrast ? 'bg-[#2DD4BF]/20' : ''}`}
+            title="High contrast"
+          >
+            <Contrast size={20} className="text-[#002B7F]" />
+          </button>
+        </div>
+      </div>
+
+      {/* BOTSI Chatbot (Floating Bottom Right) */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {!showChatbot ? (
+          <button
+            onClick={() => setShowChatbot(true)}
+            className="w-16 h-16 bg-[#002B7F] rounded-full shadow-lg flex items-center justify-center hover:bg-[#1a4a9e] transition-colors"
+          >
+            <MessageCircle size={32} className="text-white" />
+          </button>
+        ) : (
+          <div className="w-80 h-96 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+            {/* Chat Header */}
+            <div className="bg-[#002B7F] text-white p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <MessageCircle size={20} />
+                </div>
+                <div>
+                  <div className="font-semibold">BOTSI</div>
+                  <div className="text-xs text-white/70">Online Assistant</div>
+                </div>
+              </div>
+              <button onClick={() => setShowChatbot(false)} className="text-white/70 hover:text-white">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {chatMessages.map((msg) => (
+                <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] p-3 rounded-lg ${
+                    msg.type === 'user' 
+                      ? 'bg-[#002B7F] text-white' 
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Chat Input */}
+            <div className="p-4 border-t">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Type a message..."
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#2DD4BF] text-sm"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="p-2 bg-[#002B7F] text-white rounded-lg hover:bg-[#1a4a9e]"
+                >
+                  <Send size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
