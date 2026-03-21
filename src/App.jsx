@@ -24,6 +24,9 @@ import OrganogramPage from './pages/OrganogramPage';
 import QoSPage from './pages/QoSPage';
 import ProjectsPage from './pages/ProjectsPage';
 import TypeApprovalPage from './pages/TypeApprovalPage';
+import AdminPortal from './pages/AdminPortal';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import LoginPage from './pages/LoginPage';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -43,6 +46,16 @@ function AppContent() {
         case 'provider':
           if (currentPage === 'licensee') {
             return <LicenseePortal setCurrentPage={setCurrentPage} />;
+          }
+          break;
+        case 'admin':
+          if (currentPage === 'admin') {
+            return <AdminPortal setCurrentPage={setCurrentPage} />;
+          }
+          break;
+        case 'superadmin':
+          if (currentPage === 'superadmin') {
+            return <SuperAdminDashboard setCurrentPage={setCurrentPage} />;
           }
           break;
       }
@@ -103,6 +116,23 @@ function AppContent() {
         return <ProjectsPage />;
       case 'type-approval':
         return <TypeApprovalPage />;
+      case 'login-citizen':
+      case 'login-licensee':
+      case 'login-admin':
+      case 'login-superadmin':
+        return <LoginPage setCurrentPage={setCurrentPage} preselectedRole={currentPage.split('-')[1]} />;
+      case 'admin':
+        return userType === 'admin' ? (
+          <AdminPortal setCurrentPage={setCurrentPage} />
+        ) : (
+          <Homepage setCurrentPage={setCurrentPage} />
+        );
+      case 'superadmin':
+        return userType === 'superadmin' ? (
+          <SuperAdminDashboard setCurrentPage={setCurrentPage} />
+        ) : (
+          <Homepage setCurrentPage={setCurrentPage} />
+        );
       default:
         return <Homepage setCurrentPage={setCurrentPage} />;
     }
