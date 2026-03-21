@@ -5,16 +5,35 @@ import { useAuth } from '../../context/AuthContext';
 export default function Header({ currentPage, setCurrentPage }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const { user, logout } = useAuth();
 
   const navItems = [
     { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About', hasDropdown: 'about' },
+    { id: 'mandate', label: 'Mandate', hasDropdown: 'mandate' },
     { id: 'services', label: 'Online Services', hasMegaMenu: true },
     { id: 'complaints', label: 'Complaints' },
     { id: 'sector', label: 'Sector Data' },
     { id: 'tenders', label: 'Tenders' },
     { id: 'reports', label: 'Reports' },
     { id: 'news', label: 'News & Events' },
+  ];
+
+  const aboutMenu = [
+    { label: 'Profile', action: () => setCurrentPage('about') },
+    { label: 'History', action: () => setCurrentPage('about') },
+    { label: 'Organogram', action: () => setCurrentPage('organogram') },
+    { label: 'Careers', action: () => setCurrentPage('careers') },
+  ];
+
+  const mandateMenu = [
+    { label: 'Overview', action: () => setCurrentPage('mandate') },
+    { label: 'Legislation', action: () => setCurrentPage('legislation') },
+    { label: 'Telecommunications', action: () => setCurrentPage('telecom') },
+    { label: 'Broadcasting', action: () => setCurrentPage('broadcasting') },
+    { label: 'Postal Services', action: () => setCurrentPage('postal') },
+    { label: 'Internet & ICTs', action: () => setCurrentPage('internet') },
   ];
 
   const servicesMenu = [
@@ -71,32 +90,55 @@ export default function Header({ currentPage, setCurrentPage }) {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div 
-            className="flex items-center gap-3 cursor-pointer" 
+          <div
+            className="flex flex-col items-start cursor-pointer select-none"
             onClick={() => setCurrentPage('home')}
           >
-            <div className="w-12 h-12 bg-[#002B7F] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">B</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-[#002B7F]">BOCRA</h1>
-              <p className="text-xs text-gray-500">Regulating Communications</p>
+            <h1 className="text-2xl font-black tracking-widest text-[#002B7F] leading-none">BOCRA</h1>
+            <div className="flex items-center justify-end gap-1 mt-1">
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#1E90FF] inline-block"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#2ECC71] inline-block"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#E91E8C] inline-block"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#F1C40F] inline-block"></span>
             </div>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-4">
             {navItems.map((item) => (
-              <div key={item.id} className="relative">
+              <div
+                key={item.id}
+                className="relative"
+                onMouseEnter={() => item.hasDropdown ? setOpenDropdown(item.hasDropdown) : item.hasMegaMenu ? setMegaMenuOpen(true) : null}
+                onMouseLeave={() => { setOpenDropdown(null); setMegaMenuOpen(false); }}
+              >
                 {item.hasMegaMenu ? (
                   <button
-                    onMouseEnter={() => setMegaMenuOpen(true)}
-                    onMouseLeave={() => setMegaMenuOpen(false)}
                     className="flex items-center gap-1 text-gray-700 hover:text-[#002B7F] font-medium transition-colors"
                   >
                     {item.label}
                     <ChevronDown size={16} />
                   </button>
+                ) : item.hasDropdown ? (
+                  <>
+                    <button className="flex items-center gap-1 font-medium transition-colors text-gray-700 hover:text-[#002B7F]">
+                      {item.label}
+                      <ChevronDown size={16} />
+                    </button>
+                    {openDropdown === item.hasDropdown && (
+                      <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-1 w-48 z-50 border border-gray-100">
+                        {(item.hasDropdown === 'about' ? aboutMenu : mandateMenu).map((menuItem, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => { menuItem.action(); setOpenDropdown(null); }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002B7F]"
+                          >
+                            {menuItem.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <button
                     onClick={() => setCurrentPage(item.id)}

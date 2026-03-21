@@ -13,6 +13,14 @@ import BwcirtPortal from './pages/BwcirtPortal';
 import PostalPortal from './pages/PostalPortal';
 import ReportsLibrary from './pages/ReportsLibrary';
 import NewsEvents from './pages/NewsEvents';
+import AboutPage from './pages/AboutPage';
+import MandatePage from './pages/MandatePage';
+import LegislationPage from './pages/LegislationPage';
+import TelecomPage from './pages/TelecomPage';
+import BroadcastingPage from './pages/BroadcastingPage';
+import InternetPage from './pages/InternetPage';
+import CareersPage from './pages/CareersPage';
+import OrganogramPage from './pages/OrganogramPage';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -70,6 +78,22 @@ function AppContent() {
         return <ReportsLibrary setCurrentPage={setCurrentPage} />;
       case 'news':
         return <NewsEvents setCurrentPage={setCurrentPage} />;
+      case 'about':
+        return <AboutPage />;
+      case 'mandate':
+        return <MandatePage setCurrentPage={setCurrentPage} />;
+      case 'legislation':
+        return <LegislationPage />;
+      case 'telecom':
+        return <TelecomPage setCurrentPage={setCurrentPage} />;
+      case 'broadcasting':
+        return <BroadcastingPage setCurrentPage={setCurrentPage} />;
+      case 'internet':
+        return <InternetPage setCurrentPage={setCurrentPage} />;
+      case 'careers':
+        return <CareersPage />;
+      case 'organogram':
+        return <OrganogramPage />;
       default:
         return <Homepage setCurrentPage={setCurrentPage} />;
     }
