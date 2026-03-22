@@ -158,7 +158,11 @@ export default function Homepage({ setCurrentPage }) {
 
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-r from-[#002B7F] via-[#1a4a9e] to-[#2DD4BF] overflow-hidden">
+      <section className="relative overflow-hidden"
+        style={{ backgroundImage: 'url(/bocra-building.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
+        {/* Dark blue overlay */}
+        <div className="absolute inset-0 bg-[#001a4f]/80" />
+        {/* Subtle grid overlay */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -167,8 +171,8 @@ export default function Homepage({ setCurrentPage }) {
             <rect width="100" height="100" fill="url(#grid)" />
           </svg>
         </div>
-        <div className="absolute top-20 left-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-20 w-96 h-96 bg-[#2DD4BF]/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-20 w-96 h-96 bg-[#2DD4BF]/10 rounded-full blur-3xl"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 py-16 lg:py-24">
           <div className="text-center text-white mb-8">
