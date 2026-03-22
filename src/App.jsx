@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
+import VotingSystem from './pages/VotingSystem';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Homepage from './pages/Homepage';
@@ -116,6 +118,8 @@ function AppContent() {
         return <ProjectsPage />;
       case 'type-approval':
         return <TypeApprovalPage />;
+      case 'voting':
+        return <VotingSystem setCurrentPage={setCurrentPage} />;
       case 'login-citizen':
       case 'login-licensee':
       case 'login-admin':
@@ -151,9 +155,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

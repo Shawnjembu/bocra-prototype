@@ -3,8 +3,71 @@ import { mockData } from '../context/AuthContext';
 import {
   Users, Shield, BarChart2, ClipboardList, Activity,
   CheckCircle, XCircle, Pencil, Plus, Download,
-  Server, Clock, Database, AlertTriangle
+  Server, Clock, Database, AlertTriangle, MessageCircle, Send
 } from 'lucide-react';
+
+const AI_SA_RESPONSES = {
+  'System health status': 'All core systems are operational. Email notifications show minor degradation (98.1% uptime). No critical incidents in the last 24 hours.',
+  'Active admin accounts': 'You have 4 admin accounts. 3 are active, 1 is inactive. Go to Admin Accounts tab to manage roles and access.',
+  'Recent audit events': 'The Audit Log shows recent actions across all modules. Filter by module or export to CSV from the Audit Log tab.',
+  'Export system report': 'Use the System Analytics tab to view charts and export a full system report. The Export button is in the Audit Log tab.',
+};
+
+function AiAssistantSA() {
+  const [messages, setMessages] = useState([
+    { type: 'bot', text: "Hi! I'm BOTSI. I can give you a quick system overview or help you navigate." }
+  ]);
+  const [input, setInput] = useState('');
+
+  const send = (text) => {
+    const q = text || input;
+    if (!q.trim()) return;
+    setInput('');
+    setMessages(prev => [...prev, { type: 'user', text: q }]);
+    const reply = AI_SA_RESPONSES[q] || "For detailed information, navigate to the relevant tab or contact the IT support team.";
+    setTimeout(() => setMessages(prev => [...prev, { type: 'bot', text: reply }]), 600);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+      <div className="px-5 py-3 flex items-center gap-3" style={{ backgroundColor: '#002B7F' }}>
+        <MessageCircle size={18} className="text-[#2DD4BF]" />
+        <div>
+          <p className="font-semibold text-sm text-white">BOCRA AI Assistant</p>
+          <p className="text-xs text-blue-300">Powered by BOTSI · Online</p>
+        </div>
+      </div>
+      <div className="p-4 max-h-40 overflow-y-auto space-y-2">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${m.type === 'user' ? 'bg-[#002B7F] text-white' : 'bg-gray-100 text-gray-800'}`}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 pb-3">
+        <div className="flex flex-wrap gap-2 mb-2">
+          {['System health status', 'Active admin accounts', 'Recent audit events', 'Export system report'].map(p => (
+            <button key={p} onClick={() => send(p)}
+              className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full hover:bg-teal-50 hover:text-teal-700 transition-colors">
+              {p}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && send()}
+            placeholder="Ask a question..."
+            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#2DD4BF]" />
+          <button onClick={() => send()} className="p-2 text-white rounded-lg" style={{ backgroundColor: '#002B7F' }}>
+            <Send size={15} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PRIMARY = '#002B7F';
@@ -110,6 +173,8 @@ function OverviewTab({ admins, showToast }) {
           </div>
         ))}
       </div>
+
+      <AiAssistantSA />
 
       <h3 className="text-lg font-bold mb-4" style={{ color: PRIMARY }}>Quick Actions</h3>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

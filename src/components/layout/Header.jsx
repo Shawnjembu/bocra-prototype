@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Menu, X, ChevronDown, Search, User, LogOut, Shield, Building2, Lock } from 'lucide-react';
+import { Menu, X, ChevronDown, Search, User, LogOut, Shield, Lock } from 'lucide-react';
 import { useAuth, searchIndex } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const ROLE_OPTIONS = [
-  { id: 'citizen', label: 'Citizen', icon: User, color: 'bg-[#2DD4BF]', portal: 'citizen' },
-  { id: 'licensee', label: 'Licensee', icon: Building2, color: 'bg-[#F97316]', portal: 'licensee' },
+  { id: 'citizen', label: 'Citizen / Member', icon: User, color: 'bg-[#2DD4BF]', portal: 'citizen' },
   { id: 'admin', label: 'Admin', icon: Shield, color: 'bg-[#002B7F]', portal: 'admin' },
   { id: 'superadmin', label: 'Super Admin', icon: Lock, color: 'bg-red-600', portal: 'superadmin' },
 ];
@@ -19,7 +19,25 @@ export default function Header({ currentPage, setCurrentPage }) {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef(null);
   const signInRef = useRef(null);
+  const megaCloseTimer = useRef(null);
+  const dropdownCloseTimer = useRef(null);
   const { user, userType, logout } = useAuth();
+  const { lang, toggleLang } = useLanguage();
+
+  const openMegaMenu = () => {
+    if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current);
+    setMegaMenuOpen(true);
+  };
+  const closeMegaMenu = () => {
+    megaCloseTimer.current = setTimeout(() => setMegaMenuOpen(false), 120);
+  };
+  const openDropdownMenu = (id) => {
+    if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
+    setOpenDropdown(id);
+  };
+  const closeDropdownMenu = () => {
+    dropdownCloseTimer.current = setTimeout(() => setOpenDropdown(null), 120);
+  };
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -97,6 +115,7 @@ export default function Header({ currentPage, setCurrentPage }) {
         { label: 'Reports Library', action: () => setCurrentPage('reports') },
         { label: 'QoS Monitoring', action: () => setCurrentPage('qos') },
         { label: 'Type Approval', action: () => setCurrentPage('type-approval') },
+        { label: 'Internal Voting', action: () => setCurrentPage('voting') },
       ],
     },
     {
@@ -122,6 +141,13 @@ export default function Header({ currentPage, setCurrentPage }) {
           </div>
           <div className="flex items-center gap-4">
             <span>Monday - Friday: 7:30 AM - 4:30 PM</span>
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-white/30 text-xs font-bold hover:bg-white/10 transition-colors"
+              title="Toggle language / Fetola puo"
+            >
+              {lang === 'en' ? '🇧🇼 TN' : '🇬🇧 EN'}
+            </button>
           </div>
         </div>
       </div>
@@ -147,8 +173,8 @@ export default function Header({ currentPage, setCurrentPage }) {
               <div
                 key={item.id}
                 className="relative"
-                onMouseEnter={() => item.hasDropdown ? setOpenDropdown(item.hasDropdown) : item.hasMegaMenu ? setMegaMenuOpen(true) : null}
-                onMouseLeave={() => { setOpenDropdown(null); setMegaMenuOpen(false); }}
+                onMouseEnter={() => item.hasDropdown ? openDropdownMenu(item.hasDropdown) : item.hasMegaMenu ? openMegaMenu() : null}
+                onMouseLeave={() => { item.hasDropdown ? closeDropdownMenu() : item.hasMegaMenu ? closeMegaMenu() : null; }}
               >
                 {item.hasMegaMenu ? (
                   <button className="flex items-center gap-1 text-gray-700 hover:text-[#002B7F] font-medium transition-colors text-sm">
@@ -160,7 +186,9 @@ export default function Header({ currentPage, setCurrentPage }) {
                       {item.label} <ChevronDown size={14} />
                     </button>
                     {openDropdown === item.hasDropdown && (
-                      <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-1 w-48 z-50 border border-gray-100">
+                      <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-1 w-48 z-50 border border-gray-100"
+                        onMouseEnter={() => openDropdownMenu(item.hasDropdown)}
+                        onMouseLeave={closeDropdownMenu}>
                         {(item.hasDropdown === 'about' ? aboutMenu : mandateMenu).map((menuItem, idx) => (
                           <button key={idx} onClick={() => { menuItem.action(); setOpenDropdown(null); }}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002B7F]">
@@ -261,7 +289,7 @@ export default function Header({ currentPage, setCurrentPage }) {
 
       {/* Mega Menu */}
       {megaMenuOpen && (
-        <div onMouseEnter={() => setMegaMenuOpen(true)} onMouseLeave={() => setMegaMenuOpen(false)}
+        <div onMouseEnter={openMegaMenu} onMouseLeave={closeMegaMenu}
           className="absolute left-0 right-0 bg-white shadow-xl border-t z-40">
           <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
             {servicesMenu.map((section, idx) => (

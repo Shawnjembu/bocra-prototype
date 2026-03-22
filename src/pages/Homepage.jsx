@@ -3,23 +3,16 @@ import {
   ArrowRight, Users, Search, TrendingUp, FileText,
   ChevronRight, Phone, Mail, Globe, Shield, Wifi, Radio, Lock, CheckCircle,
   Bell, Clock, Zap, BarChart3, MapPin, Package, AlertTriangle, MessageCircle,
-  Eye, Type, Contrast, SkipForward, X, Send, User, Building2
+  Eye, Type, Contrast, SkipForward, X, Send, User
 } from 'lucide-react';
 import { useAuth, searchIndex } from '../context/AuthContext';
 
-const ROLE_OPTIONS = [
-  { id: 'citizen', label: 'Citizen', icon: User, color: 'bg-[#2DD4BF]' },
-  { id: 'licensee', label: 'Licensee', icon: Building2, color: 'bg-[#F97316]' },
-  { id: 'admin', label: 'Admin', icon: Shield, color: 'bg-[#002B7F]' },
-  { id: 'superadmin', label: 'Super Admin', icon: Lock, color: 'bg-red-600' },
-];
 
 export default function Homepage({ setCurrentPage }) {
   const { user, userType, login, isAuthenticated } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [activeTab, setActiveTab] = useState('consumer');
   const [newsFilter, setNewsFilter] = useState('all');
   const [showChatbot, setShowChatbot] = useState(false);
   const [chatMessages, setChatMessages] = useState([
@@ -123,13 +116,14 @@ export default function Homepage({ setCurrentPage }) {
             <h3 className="text-lg font-bold text-[#002B7F] mb-2">Sign In Required</h3>
             <p className="text-gray-600 text-sm mb-4">You need to be signed in to {pendingAction}. Choose your account type to continue.</p>
             <div className="grid grid-cols-2 gap-2 mb-4">
-              {ROLE_OPTIONS.slice(0, 2).map(role => (
-                <button key={role.id}
-                  onClick={() => { setShowLoginPrompt(false); setCurrentPage(`login-${role.id}`); }}
-                  className={`flex items-center gap-2 p-3 ${role.color} text-white rounded-lg text-sm font-medium`}>
-                  <role.icon size={16} /> {role.label}
-                </button>
-              ))}
+              <button onClick={() => { setShowLoginPrompt(false); setCurrentPage('login-citizen'); }}
+                className="flex items-center gap-2 p-3 bg-[#2DD4BF] text-white rounded-lg text-sm font-medium">
+                <User size={16} /> Citizen / Member
+              </button>
+              <button onClick={() => { setShowLoginPrompt(false); setCurrentPage('login-admin'); }}
+                className="flex items-center gap-2 p-3 bg-[#002B7F] text-white rounded-lg text-sm font-medium">
+                <Shield size={16} /> Admin
+              </button>
             </div>
             <button onClick={() => setShowLoginPrompt(false)} className="w-full py-2 text-gray-500 hover:text-gray-700 text-sm">Cancel</button>
           </div>
@@ -150,7 +144,7 @@ export default function Homepage({ setCurrentPage }) {
               <button onClick={() => setCurrentPage('tenders')} className="hover:text-[#2DD4BF] transition-colors">Tenders</button>
             </div>
             <div className="flex flex-wrap items-center gap-4">
-              <button onClick={() => setCurrentPage('licensing')} className="flex items-center gap-1 hover:text-[#2DD4BF] transition-colors">
+              <button onClick={() => handleProtectedAction('licensing', 'access the Licensing Portal')} className="flex items-center gap-1 hover:text-[#2DD4BF] transition-colors">
                 <Lock size={12} /> Licensing Portal
               </button>
               <span className="text-white/30">|</span>
@@ -162,24 +156,6 @@ export default function Homepage({ setCurrentPage }) {
         </div>
       </div>
 
-      {/* User Segmentation Tabs */}
-      <div className="bg-gray-50 border-b">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex gap-1">
-            {[
-              { id: 'consumer', label: 'Consumer' },
-              { id: 'licensee', label: 'Licensee' },
-              { id: 'staff', label: 'Staff' },
-              { id: 'researcher', label: 'Researcher' },
-            ].map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 font-medium text-sm transition-colors ${activeTab === tab.id ? 'bg-[#002B7F] text-white' : 'text-gray-600 hover:text-[#002B7F] hover:bg-gray-100'}`}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Hero */}
       <section className="relative bg-gradient-to-r from-[#002B7F] via-[#1a4a9e] to-[#2DD4BF] overflow-hidden">
@@ -232,7 +208,7 @@ export default function Homepage({ setCurrentPage }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {[
               { label: 'File Complaint', icon: FileText, action: () => handleProtectedAction('complaints', 'file a complaint') },
-              { label: 'Apply for License', icon: Shield, action: () => setCurrentPage('licensing') },
+              { label: 'Apply for License', icon: Shield, action: () => handleProtectedAction('licensing', 'apply for a license') },
               { label: 'Check Status', icon: Clock, action: () => handleProtectedAction('complaints', 'check your complaint status') },
               { label: 'Register .bw', icon: Globe, action: () => setCurrentPage('qos') },
             ].map((action, idx) => (
@@ -265,6 +241,50 @@ export default function Homepage({ setCurrentPage }) {
                 </div>
                 <h3 className="font-semibold text-[#1E293B] mb-1">{service.name}</h3>
                 <p className="text-sm text-gray-500">{service.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-14 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-[#1E293B] mb-2">How It Works</h2>
+            <p className="text-gray-500 text-sm max-w-xl mx-auto">Simple steps to use BOCRA's online platform — from filing complaints to applying for licenses.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {[
+              { step: '01', icon: User, title: 'Create an Account', desc: 'Register using your national ID or passport. Non-citizens and companies are welcome — just select the right ID type.', color: 'bg-[#002B7F]' },
+              { step: '02', icon: FileText, title: 'Access Services', desc: 'File complaints, apply for licenses, register .bw domains, or report cybersecurity incidents online.', color: 'bg-[#F97316]' },
+              { step: '03', icon: CheckCircle, title: 'Track & Manage', desc: 'Monitor your applications and complaints in real time through your personal dashboard with live status updates.', color: 'bg-[#2DD4BF]' },
+            ].map((item, idx) => (
+              <div key={idx} className="relative text-center">
+                {idx < 2 && <div className="hidden md:block absolute top-8 left-3/4 w-1/2 border-t-2 border-dashed border-gray-200 z-0" />}
+                <div className="relative z-10">
+                  <div className={`w-16 h-16 ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                    <item.icon size={28} className="text-white" />
+                  </div>
+                  <div className="text-xs font-bold text-gray-400 mb-1 tracking-widest">STEP {item.step}</div>
+                  <h3 className="font-bold text-[#1E293B] mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-500 max-w-xs mx-auto">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: AlertTriangle, label: 'File a Complaint', desc: 'Report a service issue', action: () => handleProtectedAction('complaints', 'file a complaint'), color: 'text-red-500' },
+              { icon: Shield, label: 'Apply for License', desc: 'Telecom, ISP, Broadcasting', action: () => handleProtectedAction('licensing', 'apply for a license'), color: 'text-[#002B7F]' },
+              { icon: Globe, label: 'Register .bw Domain', desc: 'Secure your online identity', action: () => setCurrentPage('qos'), color: 'text-indigo-500' },
+              { icon: Lock, label: 'Report Cyber Incident', desc: 'bwCIRT security portal', action: () => setCurrentPage('bwcirt'), color: 'text-orange-500' },
+            ].map((tool, idx) => (
+              <button key={idx} onClick={tool.action}
+                className="p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md hover:border-[#2DD4BF] transition-all text-left">
+                <tool.icon size={22} className={`${tool.color} mb-3`} />
+                <div className="font-semibold text-sm text-[#1E293B] mb-1">{tool.label}</div>
+                <div className="text-xs text-gray-500">{tool.desc}</div>
               </button>
             ))}
           </div>
@@ -408,7 +428,7 @@ export default function Homepage({ setCurrentPage }) {
                   </div>
                 ))}
               </div>
-              <button onClick={() => setCurrentPage('licensing')}
+              <button onClick={() => handleProtectedAction('licensing', 'start a license application')}
                 className="px-6 py-3 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors inline-flex items-center gap-2 text-sm">
                 Start Application <ArrowRight size={16} />
               </button>
@@ -417,7 +437,7 @@ export default function Homepage({ setCurrentPage }) {
               <h3 className="font-semibold text-[#1E293B] mb-4">License Categories</h3>
               <div className="space-y-2">
                 {['Telecommunications Service', 'Internet Service Provider', 'Value Added Services', 'Broadcasting', 'Postal Operator'].map(cat => (
-                  <button key={cat} onClick={() => setCurrentPage('licensing')}
+                  <button key={cat} onClick={() => handleProtectedAction('licensing', `apply for a ${cat} license`)}
                     className="flex items-center gap-3 p-3 bg-white rounded-lg w-full hover:shadow-sm transition-shadow text-left">
                     <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
                     <span className="text-sm">{cat}</span>
@@ -484,13 +504,14 @@ export default function Homepage({ setCurrentPage }) {
             <h2 className="text-xl font-bold text-[#1E293B] mb-2">Access Your Portal</h2>
             <p className="text-gray-500 text-sm mb-6">Sign in to your account to access personalised tools and services.</p>
             <div className="flex flex-wrap justify-center gap-3">
-              {ROLE_OPTIONS.slice(0, 2).map(role => (
-                <button key={role.id}
-                  onClick={() => setCurrentPage(`login-${role.id}`)}
-                  className={`flex items-center gap-2 px-5 py-2.5 ${role.color} text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity`}>
-                  <role.icon size={16} /> {role.label} Sign In
-                </button>
-              ))}
+              <button onClick={() => setCurrentPage('login-citizen')}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#2DD4BF] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity">
+                <User size={16} /> Citizen / Member Sign In
+              </button>
+              <button onClick={() => setCurrentPage('login-admin')}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#002B7F] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity">
+                <Shield size={16} /> Admin Sign In
+              </button>
             </div>
           </div>
         </section>

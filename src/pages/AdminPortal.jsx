@@ -4,8 +4,71 @@ import {
   LayoutDashboard, FileText, MessageSquare, Briefcase,
   Newspaper, BarChart2, CheckCircle, XCircle, Eye,
   ChevronDown, Plus, Upload, Pencil, Globe, GlobeLock,
-  AlertCircle, Clock, RefreshCw, Trash2
+  AlertCircle, Clock, RefreshCw, Trash2, MessageCircle, Send
 } from 'lucide-react';
+
+const AI_ADMIN_RESPONSES = {
+  'Pending applications summary': 'Check the License Applications tab. Filter by "pending" or "under_review" to see items awaiting action.',
+  'Open complaints count': 'Go to the Complaints tab. Filter by status to see all unresolved complaints and assign them to team members.',
+  'Draft tenders': 'Head to the Tenders tab — drafts are listed with a grey badge. Click Edit to update or Publish to make them live.',
+  'Unpublished news': 'The News & Events tab shows all draft content. Review and click Publish when ready.',
+};
+
+function AiAssistantAdmin() {
+  const [messages, setMessages] = useState([
+    { type: 'bot', text: "Hi! I'm BOTSI. Ask me about pending tasks or navigate to any section." }
+  ]);
+  const [input, setInput] = useState('');
+
+  const send = (text) => {
+    const q = text || input;
+    if (!q.trim()) return;
+    setInput('');
+    setMessages(prev => [...prev, { type: 'user', text: q }]);
+    const reply = AI_ADMIN_RESPONSES[q] || "I don't have a specific answer for that. Check the relevant tab or contact the Super Admin.";
+    setTimeout(() => setMessages(prev => [...prev, { type: 'bot', text: reply }]), 600);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+      <div className="px-5 py-3 flex items-center gap-3" style={{ backgroundColor: '#002B7F' }}>
+        <MessageCircle size={18} className="text-[#2DD4BF]" />
+        <div>
+          <p className="font-semibold text-sm text-white">BOCRA AI Assistant</p>
+          <p className="text-xs text-blue-300">Powered by BOTSI · Online</p>
+        </div>
+      </div>
+      <div className="p-4 max-h-40 overflow-y-auto space-y-2">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${m.type === 'user' ? 'bg-[#002B7F] text-white' : 'bg-gray-100 text-gray-800'}`}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 pb-3">
+        <div className="flex flex-wrap gap-2 mb-2">
+          {['Pending applications summary', 'Open complaints count', 'Draft tenders', 'Unpublished news'].map(p => (
+            <button key={p} onClick={() => send(p)}
+              className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full hover:bg-teal-50 hover:text-teal-700 transition-colors">
+              {p}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && send()}
+            placeholder="Ask a question..."
+            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#2DD4BF]" />
+          <button onClick={() => send()} className="p-2 text-white rounded-lg transition-colors" style={{ backgroundColor: '#002B7F' }}>
+            <Send size={15} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -121,6 +184,8 @@ function DashboardTab({ applications, complaints, tenders, news, events, toast }
           </div>
         ))}
       </div>
+
+      <AiAssistantAdmin />
 
       <h3 className="text-lg font-bold mb-3" style={{ color: PRIMARY }}>Recent Activity</h3>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
