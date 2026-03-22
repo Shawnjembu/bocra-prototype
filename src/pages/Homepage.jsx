@@ -161,7 +161,7 @@ export default function Homepage({ setCurrentPage }) {
       <section className="relative overflow-hidden"
         style={{ backgroundImage: 'url(/bocra-building.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
         {/* Dark blue overlay */}
-        <div className="absolute inset-0 bg-[#001a4f]/80" />
+        <div className="absolute inset-0 bg-[#001a4f]/55" />
         {/* Subtle grid overlay */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
