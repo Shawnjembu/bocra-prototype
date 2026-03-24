@@ -48,11 +48,11 @@ export default function BroadcastingPage({ setCurrentPage }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-[#002B7F] text-white py-16">
+      <div className="bg-[#D4A017] text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="text-[#2DD4BF] font-medium mb-2 uppercase tracking-wide text-sm">Mandate</p>
+          <p className="text-yellow-100 font-medium mb-2 uppercase tracking-wide text-sm">Mandate</p>
           <h1 className="text-4xl font-bold mb-4">Broadcasting</h1>
-          <p className="text-blue-200 max-w-2xl text-lg">
+          <p className="text-yellow-50 max-w-2xl text-lg">
             BOCRA is mandated by the Communications Regulatory Authority Act to regulate all broadcasting, subscription management services, and re-broadcasting activities in Botswana.
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function BroadcastingPage({ setCurrentPage }) {
                 href="https://www.bocra.org.bw/broadcasting"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-4 py-2 bg-[#002B7F] text-white rounded-lg text-sm font-medium hover:bg-[#1a4a9e] transition-colors"
+                className="inline-block px-4 py-2 bg-[#D4A017] text-white rounded-lg text-sm font-medium hover:bg-[#1a4a9e] transition-colors"
               >
                 View Audience Survey Report
               </a>
@@ -152,7 +152,7 @@ export default function BroadcastingPage({ setCurrentPage }) {
         </section>
 
         {/* Apply CTA */}
-        <section className="bg-[#002B7F] text-white rounded-xl p-8">
+        <section className="bg-[#D4A017] text-white rounded-xl p-8">
           <h2 className="text-xl font-bold mb-2">Apply for a Broadcasting Licence</h2>
           <p className="text-blue-200 mb-4 leading-relaxed">
             Entities wishing to provide broadcasting services in Botswana must obtain the appropriate licence from BOCRA. Contact us or use the online licensing portal to begin your application.

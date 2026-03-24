@@ -26,14 +26,14 @@ export default function Homepage({ setCurrentPage }) {
   const [pendingAction, setPendingAction] = useState('');
 
   const services = [
-    { id: 'telecom', name: 'Telecommunications', icon: Phone, color: 'bg-[#002B7F]', description: 'Voice & Data Services', page: 'telecom' },
-    { id: 'broadcasting', name: 'Broadcasting', icon: Radio, color: 'bg-[#2DD4BF]', description: 'Radio & TV', page: 'broadcasting' },
-    { id: 'postal', name: 'Postal Services', icon: Package, color: 'bg-[#F97316]', description: 'Courier & Mail', page: 'postal' },
-    { id: 'internet', name: 'Internet Services', icon: Wifi, color: 'bg-purple-500', description: 'ISP & Broadband', page: 'internet' },
-    { id: 'cybersecurity', name: 'Cybersecurity', icon: Lock, color: 'bg-red-500', description: 'bwCIRT', page: 'bwcirt' },
-    { id: 'typeapproval', name: 'Type Approval', icon: CheckCircle, color: 'bg-yellow-500', description: 'Device Certification', page: 'type-approval' },
-    { id: 'license', name: 'Sector Data', icon: Shield, color: 'bg-green-500', description: 'Statistics & Reports', page: 'sector' },
-    { id: 'domain', name: '.bw Domain', icon: Globe, color: 'bg-indigo-500', description: 'Domain Register', page: 'qos' },
+    { id: 'telecom', name: 'Telecommunications', icon: Phone, color: 'bg-[#0057A8]', description: 'Voice & Data Services', page: 'telecom' },
+    { id: 'broadcasting', name: 'Broadcasting', icon: Radio, color: 'bg-[#D4A017]', description: 'Radio & TV', page: 'broadcasting' },
+    { id: 'postal', name: 'Postal Services', icon: Package, color: 'bg-[#8B0000]', description: 'Courier & Mail', page: 'postal' },
+    { id: 'internet', name: 'Internet Services', icon: Wifi, color: 'bg-[#006400]', description: 'ISP & Broadband', page: 'internet' },
+    { id: 'cybersecurity', name: 'Cybersecurity', icon: Lock, color: 'bg-[#002B7F]', description: 'bwCIRT', page: 'bwcirt' },
+    { id: 'typeapproval', name: 'Type Approval', icon: CheckCircle, color: 'bg-[#475569]', description: 'Device Certification', page: 'type-approval' },
+    { id: 'license', name: 'Sector Data', icon: Shield, color: 'bg-[#1a4a9e]', description: 'Statistics & Reports', page: 'sector' },
+    { id: 'domain', name: '.bw Domain', icon: Globe, color: 'bg-[#2DD4BF]', description: 'Domain Register', page: 'qos' },
   ];
 
   const consumerTools = [
@@ -162,13 +162,24 @@ export default function Homepage({ setCurrentPage }) {
         style={{ backgroundImage: 'url(/bocra-building.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
         {/* Dark blue overlay */}
         <div className="absolute inset-0 bg-[#001a4f]/55" />
-        {/* Subtle grid overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern></defs>
-            <rect width="100" height="100" fill="url(#grid)" />
+        {/* Connectivity Web mesh pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <svg className="w-full h-full" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="white" strokeWidth="0.6" fill="none">
+              <line x1="80" y1="60" x2="220" y2="130"/><line x1="220" y1="130" x2="380" y2="80"/><line x1="380" y1="80" x2="540" y2="150"/>
+              <line x1="540" y1="150" x2="700" y2="90"/><line x1="700" y1="90" x2="760" y2="200"/><line x1="80" y1="60" x2="160" y2="200"/>
+              <line x1="160" y1="200" x2="320" y2="260"/><line x1="320" y1="260" x2="220" y2="130"/><line x1="320" y1="260" x2="480" y2="300"/>
+              <line x1="480" y1="300" x2="540" y2="150"/><line x1="480" y1="300" x2="640" y2="340"/><line x1="640" y1="340" x2="760" y2="200"/>
+              <line x1="160" y1="200" x2="80" y2="320"/><line x1="80" y1="320" x2="200" y2="400"/><line x1="200" y1="400" x2="320" y2="260"/>
+              <line x1="200" y1="400" x2="360" y2="450"/><line x1="360" y1="450" x2="480" y2="300"/><line x1="360" y1="450" x2="520" y2="460"/>
+              <line x1="520" y1="460" x2="640" y2="340"/><line x1="640" y1="340" x2="720" y2="420"/><line x1="380" y1="80" x2="320" y2="260"/>
+              <line x1="700" y1="90" x2="640" y2="340" strokeDasharray="4,4"/><line x1="80" y1="60" x2="380" y2="80" strokeDasharray="4,4"/>
+            </g>
+            <g fill="white">
+              {[[80,60],[220,130],[380,80],[540,150],[700,90],[760,200],[160,200],[320,260],[480,300],[640,340],[80,320],[200,400],[360,450],[520,460],[720,420]].map(([x,y],i)=>(
+                <circle key={i} cx={x} cy={y} r={i%3===0?3.5:2} opacity={i%3===0?0.9:0.6}/>
+              ))}
+            </g>
           </svg>
         </div>
         <div className="absolute top-20 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
@@ -176,6 +187,9 @@ export default function Homepage({ setCurrentPage }) {
 
         <div className="relative max-w-7xl mx-auto px-4 py-16 lg:py-24">
           <div className="text-center text-white mb-8">
+            <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-white/15 border border-white/30 text-sm font-semibold tracking-widest uppercase text-white/90">
+              Fair play, fair game
+            </span>
             <h1 className="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
               Connecting Botswana,<br />Empowering You
             </h1>

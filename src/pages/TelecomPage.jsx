@@ -52,11 +52,11 @@ export default function TelecomPage({ setCurrentPage }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-[#002B7F] text-white py-16">
+      <div className="bg-[#0057A8] text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="text-[#2DD4BF] font-medium mb-2 uppercase tracking-wide text-sm">Mandate</p>
+          <p className="text-blue-200 font-medium mb-2 uppercase tracking-wide text-sm">Mandate</p>
           <h1 className="text-4xl font-bold mb-4">Telecommunications</h1>
-          <p className="text-blue-200 max-w-2xl text-lg">
+          <p className="text-blue-100 max-w-2xl text-lg">
             BOCRA regulates Botswana's telecommunications sector under the Communications Regulatory Authority Act 2012, covering spectrum, numbering, licensing and consumer protection.
           </p>
         </div>
@@ -115,14 +115,14 @@ export default function TelecomPage({ setCurrentPage }) {
             <ul className="space-y-1.5">
               {licenceTypes.map((lt) => (
                 <li key={lt} className="flex items-center gap-2 text-sm text-gray-700">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#002B7F] flex-shrink-0"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0057A8] flex-shrink-0"></span>
                   {lt}
                 </li>
               ))}
             </ul>
             <button
               onClick={() => setCurrentPage('licensing')}
-              className="mt-4 w-full py-2 bg-[#002B7F] text-white rounded-lg font-medium hover:bg-[#1a4a9e] transition-colors text-sm"
+              className="mt-4 w-full py-2 bg-[#0057A8] text-white rounded-lg font-medium hover:bg-[#1a4a9e] transition-colors text-sm"
             >
               Apply for a Licence
             </button>
@@ -135,7 +135,7 @@ export default function TelecomPage({ setCurrentPage }) {
           <div className="overflow-x-auto bg-white rounded-xl shadow-sm">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-[#002B7F] text-white">
+                <tr className="bg-[#0057A8] text-white">
                   <th className="text-left px-5 py-3 font-semibold">Service</th>
                   <th className="text-left px-5 py-3 font-semibold">Status</th>
                   <th className="text-left px-5 py-3 font-semibold">Details</th>
@@ -161,7 +161,7 @@ export default function TelecomPage({ setCurrentPage }) {
         </section>
 
         {/* Consumer Protection */}
-        <section className="bg-[#002B7F] text-white rounded-xl p-8">
+        <section className="bg-[#0057A8] text-white rounded-xl p-8">
           <h2 className="text-xl font-bold mb-3">Consumer Protection</h2>
           <p className="text-blue-200 leading-relaxed mb-4">
             BOCRA investigates consumer complaints against telecommunications service providers where sufficient evidence is provided. Complaints may relate to billing disputes, service failures, interconnection issues, mobile service problems, and internet contracts.

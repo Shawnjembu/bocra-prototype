@@ -2,8 +2,8 @@ export default function MandatePage({ setCurrentPage }) {
   const sectors = [
     {
       id: 'telecom',
-      color: '#002B7F',
-      accent: '#1E90FF',
+      color: '#0057A8',
+      accent: '#1a6fc4',
       icon: '📡',
       title: 'Telecommunications',
       page: 'telecom',
@@ -20,8 +20,8 @@ export default function MandatePage({ setCurrentPage }) {
     },
     {
       id: 'broadcasting',
-      color: '#7C3AED',
-      accent: '#A78BFA',
+      color: '#D4A017',
+      accent: '#F5C842',
       icon: '📻',
       title: 'Broadcasting',
       page: 'broadcasting',
@@ -38,8 +38,8 @@ export default function MandatePage({ setCurrentPage }) {
     },
     {
       id: 'postal',
-      color: '#059669',
-      accent: '#34D399',
+      color: '#8B0000',
+      accent: '#a30000',
       icon: '📮',
       title: 'Postal Services',
       page: 'postal',
@@ -56,8 +56,8 @@ export default function MandatePage({ setCurrentPage }) {
     },
     {
       id: 'internet',
-      color: '#D97706',
-      accent: '#FCD34D',
+      color: '#006400',
+      accent: '#008000',
       icon: '🌐',
       title: 'Internet & ICTs',
       page: 'internet',

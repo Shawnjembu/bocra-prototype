@@ -124,7 +124,7 @@ export default function PostalPortal({ setCurrentPage }) {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#F97316] to-[#ea580c] text-white py-12">
+      <div className="bg-gradient-to-r from-[#8B0000] to-[#a30000] text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
@@ -203,7 +203,7 @@ export default function PostalPortal({ setCurrentPage }) {
                 <div key={operator.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#F97316] rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-[#8B0000] rounded-lg flex items-center justify-center">
                         <Truck size={24} className="text-white" />
                       </div>
                       <div>
@@ -282,7 +282,7 @@ export default function PostalPortal({ setCurrentPage }) {
                   />
                   <button
                     onClick={handleTrack}
-                    className="px-6 py-3 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors flex items-center gap-2"
+                    className="px-6 py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors flex items-center gap-2"
                   >
                     <Search size={18} />
                     Track
@@ -338,7 +338,7 @@ export default function PostalPortal({ setCurrentPage }) {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-gradient-to-br from-[#F97316] to-[#ea580c] rounded-xl p-6 text-white">
+              <div className="bg-gradient-to-br from-[#8B0000] to-[#a30000] rounded-xl p-6 text-white">
                 <h3 className="font-bold mb-2">Unified Tracking</h3>
                 <p className="text-white/80 text-sm mb-4">
                   Track packages from multiple courier services using a single platform.
@@ -384,7 +384,7 @@ export default function PostalPortal({ setCurrentPage }) {
           <div className="space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <div className="w-14 h-14 bg-[#F97316] rounded-xl flex items-center justify-center mb-4">
+                <div className="w-14 h-14 bg-[#8B0000] rounded-xl flex items-center justify-center mb-4">
                   <FileText size={28} className="text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-[#1E293B] mb-3">Apply for Courier License</h3>
@@ -605,7 +605,7 @@ export default function PostalPortal({ setCurrentPage }) {
                     <textarea rows={5} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#2DD4BF]" placeholder="Describe your complaint in detail..."></textarea>
                   </div>
 
-                  <button className="w-full px-6 py-3 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors">
+                  <button className="w-full px-6 py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors">
                     Submit Complaint
                   </button>
                 </div>

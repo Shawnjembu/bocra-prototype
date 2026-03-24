@@ -40,11 +40,11 @@ export default function InternetPage({ setCurrentPage }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-[#002B7F] text-white py-16">
+      <div className="bg-[#006400] text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="text-[#2DD4BF] font-medium mb-2 uppercase tracking-wide text-sm">Mandate</p>
+          <p className="text-green-200 font-medium mb-2 uppercase tracking-wide text-sm">Mandate</p>
           <h1 className="text-4xl font-bold mb-4">Internet & ICTs</h1>
-          <p className="text-blue-200 max-w-2xl text-lg">
+          <p className="text-green-100 max-w-2xl text-lg">
             BOCRA regulates internet and ICT services in Botswana as a converged regulator, managing domain services, cybersecurity, and the digital legal framework.
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function InternetPage({ setCurrentPage }) {
         </section>
 
         {/* CTA */}
-        <section className="bg-[#002B7F] text-white rounded-xl p-8">
+        <section className="bg-[#006400] text-white rounded-xl p-8">
           <h2 className="text-xl font-bold mb-2">Report a Cybersecurity Incident</h2>
           <p className="text-blue-200 mb-4 leading-relaxed">
             If you've experienced a cybersecurity incident — ransomware, phishing, data breach, or other attack — contact bwCIRT for assistance.

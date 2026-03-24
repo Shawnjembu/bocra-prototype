@@ -160,10 +160,10 @@ export default function Header({ currentPage, setCurrentPage }) {
           <div className="flex flex-col items-start cursor-pointer select-none flex-shrink-0" onClick={() => setCurrentPage('home')}>
             <h1 className="text-2xl font-black tracking-widest text-[#002B7F] leading-none">BOCRA</h1>
             <div className="flex items-center justify-end gap-1 mt-1">
-              <span className="bocra-dot w-3 h-3 rounded-full bg-[#1E90FF] inline-block"></span>
-              <span className="bocra-dot w-3 h-3 rounded-full bg-[#2ECC71] inline-block"></span>
-              <span className="bocra-dot w-3 h-3 rounded-full bg-[#E91E8C] inline-block"></span>
-              <span className="bocra-dot w-3 h-3 rounded-full bg-[#F1C40F] inline-block"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#0057A8] inline-block" title="Telecoms"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#D4A017] inline-block" title="Broadcasting"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#006400] inline-block" title="Internet"></span>
+              <span className="bocra-dot w-3 h-3 rounded-full bg-[#8B0000] inline-block" title="Postal Services"></span>
             </div>
           </div>
 

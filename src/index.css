@@ -20,6 +20,12 @@
     --color-slate-dark: #1E293B;
     --color-slate-medium: #475569;
     --color-slate-light: #64748B;
+
+    /* Sector brand colours */
+    --color-telecom: #0057A8;
+    --color-broadcast: #D4A017;
+    --color-internet: #006400;
+    --color-postal: #8B0000;
   }
 }
 
