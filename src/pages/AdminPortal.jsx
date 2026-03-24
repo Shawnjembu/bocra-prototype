@@ -4,7 +4,9 @@ import {
   LayoutDashboard, FileText, MessageSquare, Briefcase,
   Newspaper, BarChart2, CheckCircle, XCircle, Eye,
   ChevronDown, Plus, Upload, Pencil, Globe, GlobeLock,
-  AlertCircle, Clock, RefreshCw, Trash2, MessageCircle, Send, X
+  RefreshCw, Trash2, MessageCircle, Send, X,
+  Headphones, HelpCircle, ShieldAlert, Database,
+  Bug, ChevronRight
 } from 'lucide-react';
 
 const AI_ADMIN_RESPONSES = {
@@ -13,6 +15,59 @@ const AI_ADMIN_RESPONSES = {
   'Draft tenders': 'Head to the Tenders tab — drafts are listed with a grey badge. Click Edit to update or Publish to make them live.',
   'Unpublished news': 'The News & Events tab shows all draft content. Review and click Publish when ready.',
 };
+
+// ─── Tech Support Dummy Data ──────────────────────────────────────────────────
+const INITIAL_TECH_REQUESTS = [
+  {
+    id: 'TSR-2024-001', title: 'Database Migration Failure on Licensing Module',
+    category: 'Database', priority: 'high', status: 'in_progress',
+    description: 'The production database failed during a migration for the licensing module. Records from 2024-03-10 to 2024-03-15 may be affected. Need immediate investigation and rollback procedure.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-18',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: 'Our team is investigating the migration logs. Please do not run further migrations until this is resolved. ETA for fix: 24 hours.',
+    resolvedDate: null,
+  },
+  {
+    id: 'TSR-2024-002', title: 'User Role Permissions Not Propagating',
+    category: 'Access Control', priority: 'medium', status: 'open',
+    description: 'When an admin updates a user\'s role from "viewer" to "editor", the permissions do not take effect until the user logs out and back in. This is causing confusion for licensees using the portal.',
+    submittedBy: 'ADM-002', submittedByName: 'Phenyo Ditshebo', submittedDate: '2024-03-20',
+    assignedTo: null, assignedToName: null, response: null, resolvedDate: null,
+  },
+  {
+    id: 'TSR-2024-003', title: 'Email Notification System Offline',
+    category: 'Email / Notifications', priority: 'high', status: 'resolved',
+    description: 'Automated email notifications for license approvals, rejections, and complaint updates stopped sending after the server restart on 2024-03-09.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-10',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: 'Root cause identified: SMTP configuration was reset during the server update. Credentials have been restored and email notifications are now fully operational. Verified with test sends across all notification types.',
+    resolvedDate: '2024-03-12',
+  },
+  {
+    id: 'TSR-2024-004', title: 'Large Report Exports Return 500 Error',
+    category: 'Reports', priority: 'low', status: 'open',
+    description: 'Exporting reports larger than 5 MB triggers a 500 Internal Server Error. Smaller exports work fine. This is blocking our quarterly statistical report generation.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-21',
+    assignedTo: null, assignedToName: null, response: null, resolvedDate: null,
+  },
+  {
+    id: 'TSR-2024-005', title: 'Two-Factor Authentication Configuration',
+    category: 'Security', priority: 'medium', status: 'pending',
+    description: 'We need 2FA enabled for all admin accounts as per the new security policy directive. Please advise on setup procedure, system requirements, and impact on existing sessions.',
+    submittedBy: 'ADM-002', submittedByName: 'Phenyo Ditshebo', submittedDate: '2024-03-22',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: null, resolvedDate: null,
+  },
+  {
+    id: 'TSR-2024-006', title: 'Complaint Module Date Filter Bug',
+    category: 'Bug Report', priority: 'medium', status: 'resolved',
+    description: 'The date range filter in the complaints module only returns results for the current month regardless of the selected date range. Tested on Chrome, Firefox, and Edge.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-05',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: 'Bug confirmed and patched in version 1.4.2. The date filter was using local timezone offset instead of UTC. Deployed 2024-03-07 at 14:00.',
+    resolvedDate: '2024-03-07',
+  },
+];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -97,6 +152,36 @@ function Modal({ title, onClose, children }) {
         </div>
         <div className="p-6">{children}</div>
       </div>
+    </div>
+  );
+}
+
+// ─── Dummy Image Upload ───────────────────────────────────────────────────────
+function DummyImageUpload({ label = 'Cover Image' }) {
+  const [preview, setPreview] = useState(null);
+  const handleChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setPreview(URL.createObjectURL(file));
+  };
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
+      {preview ? (
+        <div className="relative">
+          <img src={preview} alt="preview" className="w-full h-36 object-cover rounded-lg border border-gray-200" />
+          <button type="button" onClick={() => setPreview(null)}
+            className="absolute top-1 right-1 bg-white rounded-full p-0.5 shadow text-gray-500 hover:text-red-500">
+            <X size={14} />
+          </button>
+        </div>
+      ) : (
+        <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+          <Upload size={18} className="text-gray-400 mb-1" />
+          <span className="text-xs text-gray-500">Click to upload or drag &amp; drop</span>
+          <span className="text-xs text-gray-400 mt-0.5">PNG, JPG up to 5 MB</span>
+          <input type="file" className="hidden" accept="image/*" onChange={handleChange} />
+        </label>
+      )}
     </div>
   );
 }
@@ -484,7 +569,7 @@ function TendersTab({ tenders, setTenders, showToast }) {
   const [editId, setEditId]     = useState(null);
   const [editData, setEditData] = useState({});
   const [showNew, setShowNew]   = useState(false);
-  const [newTender, setNewTender] = useState({ title: '', category: '', budget: '', closingDate: '', description: '' });
+  const [newTender, setNewTender] = useState({ title: '', category: '', closingDate: '', description: '' });
 
   const startEdit = (t) => { setEditId(t.id); setEditData({ ...t }); };
 
@@ -510,7 +595,7 @@ function TendersTab({ tenders, setTenders, showToast }) {
     };
     setTenders(prev => [next, ...prev]);
     setShowNew(false);
-    setNewTender({ title: '', category: '', budget: '', closingDate: '', description: '' });
+    setNewTender({ title: '', category: '', closingDate: '', description: '' });
     showToast('New tender added successfully.');
   };
 
@@ -522,7 +607,7 @@ function TendersTab({ tenders, setTenders, showToast }) {
       {showNew && (
         <Modal title="Add New Tender" onClose={() => setShowNew(false)}>
           <div className="space-y-3">
-            {[['Title', 'title'], ['Category', 'category'], ['Budget', 'budget'], ['Closing Date', 'closingDate']].map(([label, key]) => (
+            {[['Title', 'title'], ['Category', 'category'], ['Closing Date', 'closingDate']].map(([label, key]) => (
               <div key={key}>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
                 <input type={key === 'closingDate' ? 'date' : 'text'} value={newTender[key]}
@@ -537,6 +622,7 @@ function TendersTab({ tenders, setTenders, showToast }) {
                 onChange={e => setNewTender(p => ({ ...p, description: e.target.value }))}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none" />
             </div>
+            <DummyImageUpload label="Tender Document / Cover Image" />
             <div className="flex justify-end gap-2 pt-2">
               <Btn variant="ghost" onClick={() => setShowNew(false)}>Cancel</Btn>
               <Btn variant="primary" size="md" onClick={addTender}>Save Tender</Btn>
@@ -549,7 +635,7 @@ function TendersTab({ tenders, setTenders, showToast }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs font-bold text-gray-500 border-b bg-gray-50">
-              {['ID', 'Title', 'Category', 'Status', 'Closing Date', 'Budget', 'Actions'].map(h => (
+              {['ID', 'Title', 'Category', 'Status', 'Closing Date', 'Actions'].map(h => (
                 <th key={h} className="px-4 py-3">{h}</th>
               ))}
             </tr>
@@ -563,7 +649,6 @@ function TendersTab({ tenders, setTenders, showToast }) {
                   <td className="px-4 py-3 text-gray-500">{t.category}</td>
                   <td className="px-4 py-3"><StatusBadge status={t.status} /></td>
                   <td className="px-4 py-3 text-gray-500">{t.closingDate}</td>
-                  <td className="px-4 py-3 font-semibold text-gray-700">{t.budget}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1 flex-wrap">
                       <Btn variant="outline" onClick={() => startEdit(t)}><Pencil size={12} /> Edit</Btn>
@@ -575,9 +660,9 @@ function TendersTab({ tenders, setTenders, showToast }) {
                 </tr>
                 {editId === t.id && (
                   <tr key={`${t.id}-edit`}>
-                    <td colSpan={7} className="px-4 pb-4 bg-blue-50">
+                    <td colSpan={6} className="px-4 pb-4 bg-blue-50">
                       <div className="grid grid-cols-2 gap-3 mt-2">
-                        {[['Title', 'title'], ['Category', 'category'], ['Budget', 'budget'], ['Closing Date', 'closingDate']].map(([label, key]) => (
+                        {[['Title', 'title'], ['Category', 'category'], ['Closing Date', 'closingDate']].map(([label, key]) => (
                           <div key={key}>
                             <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
                             <input type={key === 'closingDate' ? 'date' : 'text'} value={editData[key] || ''}
@@ -657,6 +742,7 @@ function NewsTab({ news, setNews, events, setEvents, showToast }) {
                 onChange={e => setNewArticle(p => ({ ...p, body: e.target.value }))}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none" />
             </div>
+            <DummyImageUpload label="Article Cover Image" />
             <div className="flex justify-end gap-2 pt-2">
               <Btn variant="ghost" onClick={() => setShowForm(false)}>Cancel</Btn>
               <Btn variant="primary" size="md" onClick={addArticle}>Publish</Btn>
@@ -691,6 +777,10 @@ function NewsTab({ news, setNews, events, setEvents, showToast }) {
         {all.map(item => (
           <div key={`${item._source}-${item.id}`}
             className="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4 flex items-center gap-4">
+            {item.image && (
+              <img src={item.image} alt={item.title}
+                className="w-16 h-16 rounded-xl object-cover shrink-0 border border-gray-100" />
+            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold uppercase text-gray-400">{item.type}</span>
@@ -813,15 +903,167 @@ function ReportsTab({ reports, setReports, showToast }) {
   );
 }
 
+// ─── TAB: Request Tech Support ───────────────────────────────────────────────
+const SUPPORT_CATEGORIES = [
+  { label: 'Database',             icon: Database,    color: 'bg-blue-50 text-blue-700 border-blue-200'   },
+  { label: 'Access Control',       icon: ShieldAlert, color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  { label: 'Email / Notifications',icon: MessageSquare, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  { label: 'Reports',              icon: BarChart2,   color: 'bg-teal-50 text-teal-700 border-teal-200'   },
+  { label: 'Security',             icon: ShieldAlert, color: 'bg-red-50 text-red-700 border-red-200'      },
+  { label: 'Bug Report',           icon: Bug,         color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  { label: 'Other',                icon: HelpCircle,  color: 'bg-gray-50 text-gray-700 border-gray-200'   },
+];
+
+function TechSupportRequestTab({ techRequests, setTechRequests, showToast }) {
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ title: '', category: '', priority: 'medium', description: '' });
+  const [attachPreview, setAttachPreview] = useState(null);
+
+  const submit = () => {
+    if (!form.title.trim() || !form.category || !form.description.trim()) return;
+    const next = {
+      id: `TSR-2024-00${techRequests.length + 1}`,
+      ...form,
+      status: 'open',
+      submittedBy: 'ADM-001',
+      submittedByName: 'Tshegofatso Kgatlhe',
+      submittedDate: new Date().toISOString().slice(0, 10),
+      assignedTo: null, assignedToName: null,
+      response: null, resolvedDate: null,
+    };
+    setTechRequests(prev => [next, ...prev]);
+    setShowForm(false);
+    setForm({ title: '', category: '', priority: 'medium', description: '' });
+    setAttachPreview(null);
+    showToast('Tech support request submitted to Super Admin.');
+  };
+
+  const myRequests = techRequests.slice(0, 3);
+
+  return (
+    <div>
+      <SectionHeader title="Request Technical Support"
+        action={<Btn variant="primary" size="md" onClick={() => setShowForm(true)}><Plus size={14} /> New Request</Btn>} />
+
+      {/* Submit dialog */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: PRIMARY }}>
+              <div>
+                <h3 className="text-white font-bold text-lg">Submit Support Request</h3>
+                <p className="text-white/70 text-xs mt-0.5">Sent directly to the Super Admin</p>
+              </div>
+              <button onClick={() => setShowForm(false)} className="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Request Title <span className="text-red-500">*</span></label>
+                <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
+                  placeholder="e.g. Email notifications not sending"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Category <span className="text-red-500">*</span></label>
+                  <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
+                    <option value="">Select…</option>
+                    {SUPPORT_CATEGORIES.map(c => <option key={c.label} value={c.label}>{c.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Priority</label>
+                  <select value={form.priority} onChange={e => setForm(p => ({ ...p, priority: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Description <span className="text-red-500">*</span></label>
+                <textarea rows={5} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+                  placeholder="Describe the issue in detail — include steps to reproduce, error messages, affected users…"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none resize-none" />
+              </div>
+              {/* Dummy attachment */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Attachment (optional)</label>
+                {attachPreview ? (
+                  <div className="flex items-center gap-3 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                    <FileText size={16} className="text-blue-600 shrink-0" />
+                    <span className="text-sm text-blue-700 flex-1 truncate">{attachPreview}</span>
+                    <button onClick={() => setAttachPreview(null)} className="text-gray-400 hover:text-red-500"><X size={14} /></button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <Upload size={16} className="text-gray-400 mb-1" />
+                    <span className="text-xs text-gray-500">Click to attach a screenshot or log file</span>
+                    <input type="file" className="hidden" onChange={e => e.target.files[0] && setAttachPreview(e.target.files[0].name)} />
+                  </label>
+                )}
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+              <Btn variant="ghost" onClick={() => setShowForm(false)}>Cancel</Btn>
+              <Btn variant="primary" size="md" onClick={submit}>
+                <Send size={13} /> Submit Request
+              </Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Category quick-select cards */}
+      <div className="mb-6">
+        <p className="text-sm font-semibold text-gray-500 mb-3">Select a category to get started</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {SUPPORT_CATEGORIES.map(cat => (
+            <button key={cat.label} onClick={() => { setForm(p => ({ ...p, category: cat.label })); setShowForm(true); }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-medium text-sm transition-all hover:shadow-sm ${cat.color}`}>
+              <cat.icon size={18} className="shrink-0" />
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent own submissions preview */}
+      <div>
+        <p className="text-sm font-semibold text-gray-500 mb-3">Your Recent Submissions</p>
+        <div className="space-y-2">
+          {myRequests.map(r => (
+            <div key={r.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex items-center gap-3 shadow-sm">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: PRIMARY }}>
+                <Headphones size={15} className="text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-800 truncate">{r.title}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{r.id} · {r.submittedDate}</p>
+              </div>
+              <StatusBadge status={r.status} />
+              <ChevronRight size={16} className="text-gray-300 shrink-0" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AdminPortal({ setCurrentPage }) {
   const TABS = [
-    { id: 'dashboard',    label: 'Dashboard',     icon: LayoutDashboard },
-    { id: 'licenses',     label: 'License Apps',  icon: FileText        },
-    { id: 'complaints',   label: 'Complaints',    icon: MessageSquare   },
-    { id: 'tenders',      label: 'Tenders',       icon: Briefcase       },
-    { id: 'news',         label: 'News & Events', icon: Newspaper       },
-    { id: 'reports',      label: 'Reports',       icon: BarChart2       },
+    { id: 'dashboard',      label: 'Dashboard',        icon: LayoutDashboard },
+    { id: 'licenses',       label: 'License Apps',     icon: FileText        },
+    { id: 'complaints',     label: 'Complaints',       icon: MessageSquare   },
+    { id: 'tenders',        label: 'Tenders',          icon: Briefcase       },
+    { id: 'news',           label: 'News & Events',    icon: Newspaper       },
+    { id: 'reports',        label: 'Reports',          icon: BarChart2       },
+    { id: 'tech-support',   label: 'Request Support',  icon: Headphones      },
   ];
 
   const [activeTab, setActiveTab]       = useState('dashboard');
@@ -831,6 +1073,7 @@ export default function AdminPortal({ setCurrentPage }) {
   const [news,         setNews]         = useState(mockData.news);
   const [events,       setEvents]       = useState(mockData.events);
   const [reports,      setReports]      = useState(mockData.reports);
+  const [techRequests, setTechRequests] = useState(INITIAL_TECH_REQUESTS);
   const [toast,        setToast]        = useState(null);
   const [showChat,     setShowChat]     = useState(false);
   const [chatInput,    setChatInput]    = useState('');
@@ -889,7 +1132,8 @@ export default function AdminPortal({ setCurrentPage }) {
         {activeTab === 'complaints' && <ComplaintsTab complaints={complaints} setComplaints={setComplaints} showToast={showToast} />}
         {activeTab === 'tenders'    && <TendersTab tenders={tenders} setTenders={setTenders} showToast={showToast} />}
         {activeTab === 'news'       && <NewsTab news={news} setNews={setNews} events={events} setEvents={setEvents} showToast={showToast} />}
-        {activeTab === 'reports'    && <ReportsTab reports={reports} setReports={setReports} showToast={showToast} />}
+        {activeTab === 'reports'      && <ReportsTab reports={reports} setReports={setReports} showToast={showToast} />}
+        {activeTab === 'tech-support' && <TechSupportRequestTab techRequests={techRequests} setTechRequests={setTechRequests} showToast={showToast} />}
       </div>
 
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}

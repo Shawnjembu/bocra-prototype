@@ -3,7 +3,8 @@ import { mockData } from '../context/AuthContext';
 import {
   Users, Shield, BarChart2, ClipboardList, Activity,
   CheckCircle, XCircle, Pencil, Plus, Download,
-  Server, Clock, Database, AlertTriangle, MessageCircle, Send, X
+  Server, Clock, Database, AlertTriangle, MessageCircle, Send, X,
+  Headphones, Inbox, Eye, ArrowUpCircle, FileText
 } from 'lucide-react';
 
 const AI_SA_RESPONSES = {
@@ -505,6 +506,348 @@ function AnalyticsTab() {
   );
 }
 
+// ─── Tech Requests Data ───────────────────────────────────────────────────────
+const INITIAL_TECH_REQUESTS = [
+  {
+    id: 'TSR-2024-001', title: 'Database Migration Failure on Licensing Module',
+    category: 'Database', priority: 'high', status: 'in_progress',
+    description: 'The production database failed during a migration for the licensing module. Records from 2024-03-10 to 2024-03-15 may be affected. Need immediate investigation and rollback procedure.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-18',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: 'Our team is investigating the migration logs. Please do not run further migrations until resolved. ETA for fix: 24 hours.',
+    resolvedDate: null, escalated: false,
+  },
+  {
+    id: 'TSR-2024-002', title: 'User Role Permissions Not Propagating',
+    category: 'Access Control', priority: 'medium', status: 'open',
+    description: 'When an admin updates a user\'s role from "viewer" to "editor", the permissions do not take effect until the user logs out and back in. This is causing confusion for licensees using the portal.',
+    submittedBy: 'ADM-002', submittedByName: 'Phenyo Ditshebo', submittedDate: '2024-03-20',
+    assignedTo: null, assignedToName: null, response: null, resolvedDate: null, escalated: false,
+  },
+  {
+    id: 'TSR-2024-003', title: 'Email Notification System Offline',
+    category: 'Email / Notifications', priority: 'high', status: 'resolved',
+    description: 'Automated email notifications for license approvals, rejections, and complaint updates stopped sending after the server restart on 2024-03-09.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-10',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: 'Root cause identified: SMTP configuration was reset during the server update. Credentials restored. Email notifications are now fully operational. Verified with test sends across all notification types.',
+    resolvedDate: '2024-03-12', escalated: false,
+  },
+  {
+    id: 'TSR-2024-004', title: 'Large Report Exports Return 500 Error',
+    category: 'Reports', priority: 'low', status: 'open',
+    description: 'Exporting reports larger than 5 MB triggers a 500 Internal Server Error. Smaller exports work fine. This is blocking quarterly statistical report generation.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-21',
+    assignedTo: null, assignedToName: null, response: null, resolvedDate: null, escalated: false,
+  },
+  {
+    id: 'TSR-2024-005', title: 'Two-Factor Authentication Configuration',
+    category: 'Security', priority: 'medium', status: 'pending',
+    description: 'We need 2FA enabled for all admin accounts as per the new security policy directive. Please advise on setup procedure, system requirements, and impact on existing sessions.',
+    submittedBy: 'ADM-002', submittedByName: 'Phenyo Ditshebo', submittedDate: '2024-03-22',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: null, resolvedDate: null, escalated: false,
+  },
+  {
+    id: 'TSR-2024-006', title: 'Complaint Module Date Filter Bug',
+    category: 'Bug Report', priority: 'medium', status: 'resolved',
+    description: 'The date range filter in the complaints module only returns results for the current month regardless of the selected date range. Tested on Chrome, Firefox, and Edge.',
+    submittedBy: 'ADM-001', submittedByName: 'Tshegofatso Kgatlhe', submittedDate: '2024-03-05',
+    assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems',
+    response: 'Bug confirmed and patched in version 1.4.2. The date filter was using local timezone offset instead of UTC. Deployed 2024-03-07 at 14:00.',
+    resolvedDate: '2024-03-07', escalated: false,
+  },
+];
+
+// ─── TAB 6: Tech Requests ─────────────────────────────────────────────────────
+function TechRequestsTab({ techRequests, setTechRequests, showToast }) {
+  const [filter,      setFilter]      = useState('all');
+  const [viewReq,     setViewReq]     = useState(null);
+  const [respondId,   setRespondId]   = useState(null);
+  const [responseText,setResponseText]= useState('');
+  const [closeId,     setCloseId]     = useState(null);
+
+  const statuses = ['all', 'open', 'pending', 'in_progress', 'resolved', 'cancelled'];
+  const visible  = filter === 'all' ? techRequests : techRequests.filter(r => r.status === filter);
+
+  const priorityColor = {
+    high:   'text-red-700 bg-red-50 border-red-200',
+    medium: 'text-yellow-700 bg-yellow-50 border-yellow-200',
+    low:    'text-gray-600 bg-gray-100 border-gray-200',
+  };
+  const statusColor = {
+    open:        'bg-blue-100 text-blue-800',
+    pending:     'bg-yellow-100 text-yellow-800',
+    in_progress: 'bg-purple-100 text-purple-800',
+    resolved:    'bg-green-100 text-green-800',
+    cancelled:   'bg-gray-100 text-gray-500',
+  };
+
+  const assignToSelf = (id) => {
+    setTechRequests(prev => prev.map(r =>
+      r.id === id ? { ...r, status: 'in_progress', assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems' } : r
+    ));
+    showToast('Request assigned to you and marked In Progress.');
+  };
+
+  const submitResponse = () => {
+    if (!responseText.trim()) return;
+    setTechRequests(prev => prev.map(r =>
+      r.id === respondId ? { ...r, response: responseText, status: 'in_progress', assignedTo: 'SUP-001', assignedToName: 'Director of IT Systems' } : r
+    ));
+    if (viewReq?.id === respondId) setViewReq(prev => ({ ...prev, response: responseText }));
+    setRespondId(null);
+    setResponseText('');
+    showToast('Response sent to admin.');
+  };
+
+  const markResolved = (id) => {
+    setTechRequests(prev => prev.map(r =>
+      r.id === id ? { ...r, status: 'resolved', resolvedDate: new Date().toISOString().slice(0, 10) } : r
+    ));
+    setCloseId(null);
+    showToast('Request marked as resolved.');
+  };
+
+  const openCount   = techRequests.filter(r => r.status === 'open').length;
+  const urgentCount = techRequests.filter(r => r.priority === 'high' && r.status !== 'resolved' && r.status !== 'cancelled').length;
+  const escalated   = techRequests.filter(r => r.escalated && r.status !== 'resolved').length;
+
+  return (
+    <div>
+      <SectionHeader title="Tech Support Requests" />
+
+      {/* Summary cards */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        {[
+          { label: 'Open Requests',    value: openCount,   color: 'bg-blue-50 text-blue-700',   icon: Inbox        },
+          { label: 'High Priority',    value: urgentCount, color: 'bg-red-50 text-red-700',     icon: AlertTriangle},
+          { label: 'Escalated',        value: escalated,   color: 'bg-orange-50 text-orange-700',icon: ArrowUpCircle},
+        ].map(c => (
+          <div key={c.label} className={`rounded-2xl p-4 flex items-center gap-4 ${c.color} shadow-sm`}>
+            <c.icon size={28} />
+            <div>
+              <p className="text-2xl font-extrabold">{c.value}</p>
+              <p className="text-xs font-semibold opacity-80">{c.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-2 mb-4 flex-wrap">
+        {statuses.map(s => (
+          <button key={s} onClick={() => setFilter(s)}
+            className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${filter === s ? 'text-white border-transparent' : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'}`}
+            style={filter === s ? { backgroundColor: PRIMARY } : {}}>
+            {s === 'all' ? `All (${techRequests.length})` : s.replace(/_/g, ' ')}
+          </button>
+        ))}
+      </div>
+
+      {/* Request cards */}
+      <div className="space-y-3">
+        {visible.map(req => (
+          <div key={req.id} className={`bg-white rounded-2xl shadow-sm border px-5 py-4 ${req.escalated && req.status !== 'resolved' ? 'border-red-300' : 'border-gray-100'}`}>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: PRIMARY }}>
+                <Headphones size={18} className="text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <span className="font-mono text-xs text-gray-400">{req.id}</span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusColor[req.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                    {req.status.replace(/_/g, ' ')}
+                  </span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border capitalize ${priorityColor[req.priority]}`}>
+                    {req.priority}
+                  </span>
+                  {req.escalated && req.status !== 'resolved' && (
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700 flex items-center gap-1">
+                      <ArrowUpCircle size={11} /> Escalated
+                    </span>
+                  )}
+                </div>
+                <p className="font-semibold text-gray-800">{req.title}</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {req.category} · {req.submittedDate} · From {req.submittedByName}
+                  {req.assignedToName ? ` · Assigned to ${req.assignedToName}` : ' · Unassigned'}
+                </p>
+                {req.response && (
+                  <div className="mt-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <p className="text-xs font-semibold text-green-700 mb-0.5">Your Response</p>
+                    <p className="text-xs text-green-800 line-clamp-2">{req.response}</p>
+                  </div>
+                )}
+              </div>
+              {/* Actions */}
+              <div className="flex flex-col gap-1.5 shrink-0">
+                <Btn variant="ghost" onClick={() => setViewReq(req)}>
+                  <Eye size={12} /> View
+                </Btn>
+                {!req.assignedTo && req.status === 'open' && (
+                  <Btn variant="outline" onClick={() => assignToSelf(req.id)}>
+                    <Users size={12} /> Assign to Me
+                  </Btn>
+                )}
+                {req.status !== 'resolved' && req.status !== 'cancelled' && (
+                  <Btn variant="primary" onClick={() => { setRespondId(req.id); setResponseText(req.response ?? ''); }}>
+                    <Send size={12} /> Respond
+                  </Btn>
+                )}
+                {['in_progress', 'open', 'pending'].includes(req.status) && (
+                  <Btn variant="teal" onClick={() => setCloseId(req.id)}>
+                    <CheckCircle size={12} /> Resolve
+                  </Btn>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        {visible.length === 0 && (
+          <div className="bg-white rounded-2xl border border-gray-100 px-5 py-12 text-center text-gray-400">
+            No requests match this filter.
+          </div>
+        )}
+      </div>
+
+      {/* ── View Detail Modal ── */}
+      {viewReq && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: PRIMARY }}>
+              <div>
+                <h3 className="text-white font-bold text-lg">Request Details</h3>
+                <p className="text-white/70 text-xs mt-0.5">{viewReq.id}</p>
+              </div>
+              <button onClick={() => setViewReq(null)} className="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div className="flex gap-2 flex-wrap">
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusColor[viewReq.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                  {viewReq.status.replace(/_/g, ' ')}
+                </span>
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border capitalize ${priorityColor[viewReq.priority]}`}>
+                  {viewReq.priority} priority
+                </span>
+                {viewReq.escalated && (
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-700 flex items-center gap-1">
+                    <ArrowUpCircle size={11} /> Escalated
+                  </span>
+                )}
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Title</p>
+                <p className="text-base font-bold text-gray-800">{viewReq.title}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                {[
+                  ['Category',       viewReq.category],
+                  ['Submitted By',   viewReq.submittedByName],
+                  ['Submitted Date', viewReq.submittedDate],
+                  ['Assigned To',    viewReq.assignedToName ?? 'Unassigned'],
+                  ['Resolved Date',  viewReq.resolvedDate ?? '—'],
+                ].map(([label, val]) => (
+                  <div key={label}>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+                    <p className="text-sm text-gray-800">{val}</p>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Description</p>
+                <div className="bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-700 leading-relaxed border border-gray-100">
+                  {viewReq.description}
+                </div>
+              </div>
+              {viewReq.escalationNote && (
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Escalation Note</p>
+                  <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+                    {viewReq.escalationNote}
+                  </div>
+                </div>
+              )}
+              {viewReq.response ? (
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Your Response</p>
+                  <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-800 leading-relaxed">
+                    {viewReq.response}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-center gap-2 text-sm text-yellow-700">
+                  <Clock size={15} className="shrink-0" /> No response sent yet.
+                </div>
+              )}
+            </div>
+            <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+              {viewReq.status !== 'resolved' && viewReq.status !== 'cancelled' && (
+                <Btn variant="primary" onClick={() => { setRespondId(viewReq.id); setResponseText(viewReq.response ?? ''); setViewReq(null); }}>
+                  <Send size={13} /> Respond
+                </Btn>
+              )}
+              <Btn variant="ghost" onClick={() => setViewReq(null)}>Close</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Respond Modal ── */}
+      {respondId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: PRIMARY }}>
+              <div>
+                <h3 className="text-white font-bold text-lg">Send Response</h3>
+                <p className="text-white/70 text-xs mt-0.5">{respondId}</p>
+              </div>
+              <button onClick={() => setRespondId(null)} className="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div className="p-6 space-y-3">
+              <p className="text-sm text-gray-500">Your response will be visible to the admin who submitted this request.</p>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Response <span className="text-red-500">*</span></label>
+                <textarea rows={6} value={responseText} onChange={e => setResponseText(e.target.value)}
+                  placeholder="Describe the resolution, steps taken, or further information required…"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none resize-none" />
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+              <Btn variant="ghost" onClick={() => setRespondId(null)}>Cancel</Btn>
+              <Btn variant="primary" size="md" onClick={submitResponse}>
+                <Send size={13} /> Send Response
+              </Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Resolve Confirm Modal ── */}
+      {closeId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: PRIMARY }}>
+              <h3 className="text-white font-bold text-lg">Mark as Resolved</h3>
+              <button onClick={() => setCloseId(null)} className="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-gray-600 mb-1">Mark this request as resolved?</p>
+              <p className="text-xs text-gray-400">The submitting admin will be notified that the issue has been closed.</p>
+            </div>
+            <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+              <Btn variant="ghost" onClick={() => setCloseId(null)}>Cancel</Btn>
+              <Btn variant="teal" onClick={() => markResolved(closeId)}>
+                <CheckCircle size={13} /> Confirm Resolve
+              </Btn>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function SuperAdminDashboard({ setCurrentPage }) {
   const TABS = [
@@ -513,10 +856,12 @@ export default function SuperAdminDashboard({ setCurrentPage }) {
     { id: 'roles',      label: 'Role & Permissions', icon: Shield      },
     { id: 'audit',      label: 'Audit Log',        icon: ClipboardList },
     { id: 'analytics',  label: 'System Analytics', icon: BarChart2     },
+    { id: 'tech',       label: 'Tech Requests',    icon: Inbox         },
   ];
 
   const [activeTab,    setActiveTab]    = useState('overview');
   const [admins,       setAdmins]       = useState(mockData.adminUsers);
+  const [techRequests, setTechRequests] = useState(INITIAL_TECH_REQUESTS);
   const [toast,        setToast]        = useState(null);
   const [showChat,     setShowChat]     = useState(false);
   const [chatInput,    setChatInput]    = useState('');
@@ -583,6 +928,7 @@ export default function SuperAdminDashboard({ setCurrentPage }) {
         {activeTab === 'roles'     && <RolesTab />}
         {activeTab === 'audit'     && <AuditLogTab showToast={showToast} />}
         {activeTab === 'analytics' && <AnalyticsTab />}
+        {activeTab === 'tech'      && <TechRequestsTab techRequests={techRequests} setTechRequests={setTechRequests} showToast={showToast} />}
       </div>
 
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
