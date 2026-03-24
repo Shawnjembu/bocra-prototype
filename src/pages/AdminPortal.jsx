@@ -145,11 +145,85 @@ function DashboardTab({ applications, complaints, tenders, news, events, toast }
   );
 }
 
+// ─── License Application Detail Modal ────────────────────────────────────────
+function LicenseDetailModal({ app, onClose }) {
+  const fields = [
+    { label: 'Application ID',    value: app.id },
+    { label: 'Company Name',      value: app.companyName },
+    { label: 'License Type',      value: app.licenseType },
+    { label: 'Category',          value: app.category },
+    { label: 'Registration No.',  value: app.regNumber },
+    { label: 'Contact Email',     value: app.contactEmail },
+    { label: 'Application Fee',   value: app.fee },
+    { label: 'Submitted Date',    value: app.submittedDate },
+    { label: 'Assigned To',       value: app.assignedTo ?? 'Unassigned' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: PRIMARY }}>
+          <div>
+            <h3 className="text-white font-bold text-lg">License Application Details</h3>
+            <p className="text-white/70 text-xs mt-0.5">{app.id}</p>
+          </div>
+          <button onClick={onClose} className="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+
+        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          {/* Status banner */}
+          <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+            <span className="text-sm font-semibold text-gray-500">Status</span>
+            <StatusBadge status={app.status} />
+          </div>
+
+          {/* Details grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+            {fields.map(({ label, value }) => (
+              <div key={label}>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+                <p className="text-sm font-medium text-gray-800">{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Submitted Documents */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Submitted Documents</p>
+            <div className="flex flex-wrap gap-2">
+              {app.documents.map(doc => (
+                <span key={doc} className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                  <FileText size={11} /> {doc}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Rejection reason (if applicable) */}
+          {app.rejectionReason && (
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <p className="text-xs font-semibold text-red-500 uppercase tracking-wide mb-1">Rejection Reason</p>
+              <p className="text-sm text-red-700">{app.rejectionReason}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t bg-gray-50 flex justify-end">
+          <Btn variant="ghost" onClick={onClose}>Close</Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── TAB: License Applications ────────────────────────────────────────────────
 function LicenseTab({ applications, setApplications, showToast }) {
   const [filter, setFilter]           = useState('all');
   const [rejectId, setRejectId]       = useState(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [viewApp, setViewApp]         = useState(null);
 
   const visible = filter === 'all' ? applications : applications.filter(a => a.status === filter);
 
@@ -210,7 +284,7 @@ function LicenseTab({ applications, setApplications, showToast }) {
                           <XCircle size={12} /> Reject
                         </Btn>
                       )}
-                      <Btn variant="ghost">
+                      <Btn variant="ghost" onClick={() => setViewApp(app)}>
                         <Eye size={12} /> View
                       </Btn>
                     </div>
@@ -240,19 +314,99 @@ function LicenseTab({ applications, setApplications, showToast }) {
           </tbody>
         </table>
       </div>
+
+      {viewApp && <LicenseDetailModal app={viewApp} onClose={() => setViewApp(null)} />}
+    </div>
+  );
+}
+
+// ─── Assign Complaint Modal ───────────────────────────────────────────────────
+const EMPLOYEES = [
+  { id: 'ADM-001', name: 'Tshegofatso Kgatlhe',  department: 'Compliance and Monitoring', role: 'Senior Compliance Officer',  activeComplaints: 3, avatar: 'TK' },
+  { id: 'ADM-002', name: 'Phenyo Ditshebo',       department: 'Business Development',      role: 'Regulatory Affairs Officer', activeComplaints: 1, avatar: 'PD' },
+  { id: 'ADM-004', name: 'Boitumelo Seretse',     department: 'Consumer Affairs',          role: 'Consumer Protection Officer',activeComplaints: 5, avatar: 'BS' },
+  { id: 'ADM-005', name: 'Kabo Mosweu',           department: 'Technical Services',        role: 'Technical Analyst',          activeComplaints: 2, avatar: 'KM' },
+  { id: 'ADM-006', name: 'Refilwe Molefhi',       department: 'Compliance and Monitoring', role: 'Compliance Officer',         activeComplaints: 0, avatar: 'RM' },
+];
+
+function AssignModal({ complaintId, onAssign, onClose }) {
+  const [selected, setSelected] = useState(null);
+
+  const confirm = () => {
+    if (!selected) return;
+    onAssign(complaintId, selected);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: PRIMARY }}>
+          <div>
+            <h3 className="text-white font-bold text-lg">Assign Complaint</h3>
+            <p className="text-white/70 text-xs mt-0.5">Select an employee to handle this complaint</p>
+          </div>
+          <button onClick={onClose} className="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+        </div>
+
+        {/* Employee list */}
+        <div className="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
+          {EMPLOYEES.map(emp => (
+            <button
+              key={emp.id}
+              onClick={() => setSelected(emp)}
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${
+                selected?.id === emp.id
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-100 bg-gray-50 hover:bg-gray-100'
+              }`}
+            >
+              {/* Avatar */}
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                style={{ backgroundColor: PRIMARY }}>
+                {emp.avatar}
+              </div>
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-800">{emp.name}</p>
+                <p className="text-xs text-gray-500 truncate">{emp.role} · {emp.department}</p>
+              </div>
+              {/* Workload */}
+              <div className="text-right shrink-0">
+                <p className="text-xs font-bold text-gray-700">{emp.activeComplaints}</p>
+                <p className="text-xs text-gray-400">active</p>
+              </div>
+              {/* Selected indicator */}
+              {selected?.id === emp.id && (
+                <CheckCircle size={18} className="text-blue-600 shrink-0" />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+          <Btn variant="ghost" onClick={onClose}>Cancel</Btn>
+          <Btn variant="primary" onClick={confirm} className={!selected ? 'opacity-50 cursor-not-allowed' : ''}>
+            <CheckCircle size={13} /> Assign
+          </Btn>
+        </div>
+      </div>
     </div>
   );
 }
 
 // ─── TAB: Complaints ─────────────────────────────────────────────────────────
 function ComplaintsTab({ complaints, setComplaints, showToast }) {
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter]       = useState('all');
+  const [assignId, setAssignId]   = useState(null);
 
   const visible = filter === 'all' ? complaints : complaints.filter(c => c.status === filter);
 
-  const assign = (id) => {
-    setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: 'under_review', assignedTo: 'ADM-001' } : c));
-    showToast('Complaint assigned to ADM-001.');
+  const assign = (id, employee) => {
+    setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: 'under_review', assignedTo: employee.id } : c));
+    showToast(`Complaint assigned to ${employee.name}.`);
   };
   const resolve = (id) => {
     setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: 'resolved', resolvedDate: new Date().toISOString().slice(0, 10) } : c));
@@ -295,7 +449,7 @@ function ComplaintsTab({ complaints, setComplaints, showToast }) {
                 <td className="px-4 py-3">
                   <div className="flex gap-1">
                     {!c.assignedTo && c.status === 'submitted' && (
-                      <Btn variant="primary" onClick={() => assign(c.id)}>Assign</Btn>
+                      <Btn variant="primary" onClick={() => setAssignId(c.id)}>Assign</Btn>
                     )}
                     {c.status !== 'resolved' && (
                       <Btn variant="ghost" onClick={() => resolve(c.id)}>
@@ -313,6 +467,14 @@ function ComplaintsTab({ complaints, setComplaints, showToast }) {
           </tbody>
         </table>
       </div>
+
+      {assignId && (
+        <AssignModal
+          complaintId={assignId}
+          onAssign={assign}
+          onClose={() => setAssignId(null)}
+        />
+      )}
     </div>
   );
 }
