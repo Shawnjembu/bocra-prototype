@@ -26,14 +26,14 @@ export default function Homepage({ setCurrentPage }) {
   const [pendingAction, setPendingAction] = useState('');
 
   const services = [
-    { id: 'telecom', name: 'Telecommunications', icon: Phone, color: 'bg-[#0057A8]', description: 'Voice & Data Services', page: 'telecom' },
-    { id: 'broadcasting', name: 'Broadcasting', icon: Radio, color: 'bg-[#D4A017]', description: 'Radio & TV', page: 'broadcasting' },
-    { id: 'postal', name: 'Postal Services', icon: Package, color: 'bg-[#8B0000]', description: 'Courier & Mail', page: 'postal' },
-    { id: 'internet', name: 'Internet Services', icon: Wifi, color: 'bg-[#006400]', description: 'ISP & Broadband', page: 'internet' },
-    { id: 'cybersecurity', name: 'Cybersecurity', icon: Lock, color: 'bg-[#002B7F]', description: 'bwCIRT', page: 'bwcirt' },
-    { id: 'typeapproval', name: 'Type Approval', icon: CheckCircle, color: 'bg-[#475569]', description: 'Device Certification', page: 'type-approval' },
-    { id: 'license', name: 'Sector Data', icon: Shield, color: 'bg-[#1a4a9e]', description: 'Statistics & Reports', page: 'sector' },
-    { id: 'domain', name: '.bw Domain', icon: Globe, color: 'bg-[#2DD4BF]', description: 'Domain Register', page: 'qos' },
+    { id: 'telecom', name: 'Telecommunications', icon: Phone, color: 'bg-[#0057A8]', description: 'Voice & Data Services', page: 'telecom', hoverBorder: '#0057A8' },
+    { id: 'broadcasting', name: 'Broadcasting', icon: Radio, color: 'bg-[#D4A017]', description: 'Radio & TV', page: 'broadcasting', hoverBorder: '#D4A017' },
+    { id: 'postal', name: 'Postal Services', icon: Package, color: 'bg-[#8B0000]', description: 'Courier & Mail', page: 'postal', hoverBorder: '#8B0000' },
+    { id: 'internet', name: 'Internet Services', icon: Wifi, color: 'bg-[#006400]', description: 'ISP & Broadband', page: 'internet', hoverBorder: '#006400' },
+    { id: 'cybersecurity', name: 'Cybersecurity', icon: Lock, color: 'bg-[#002B7F]', description: 'bwCIRT', page: 'bwcirt', hoverBorder: '#002B7F' },
+    { id: 'typeapproval', name: 'Type Approval', icon: CheckCircle, color: 'bg-[#475569]', description: 'Device Certification', page: 'type-approval', hoverBorder: '#475569' },
+    { id: 'license', name: 'Sector Data', icon: Shield, color: 'bg-[#1a4a9e]', description: 'Statistics & Reports', page: 'sector', hoverBorder: '#1a4a9e' },
+    { id: 'domain', name: '.bw Domain', icon: Globe, color: 'bg-[#2DD4BF]', description: 'Domain Register', page: 'qos', hoverBorder: '#2DD4BF' },
   ];
 
   const consumerTools = [
@@ -231,9 +231,10 @@ export default function Homepage({ setCurrentPage }) {
               { label: 'Register .bw', icon: Globe, action: () => setCurrentPage('qos') },
             ].map((action, idx) => (
               <button key={idx} onClick={action.action}
-                className="flex flex-col items-center gap-2 p-4 bg-white/10 backdrop-blur rounded-xl hover:bg-white/20 transition-all">
-                <action.icon size={24} className="text-white" />
+                className="group lift-sm bocra-focusable flex flex-col items-center gap-2 p-4 bg-white/10 backdrop-blur rounded-xl hover:bg-white/25 hover:scale-105 transition-all duration-250 cursor-pointer relative overflow-hidden">
+                <action.icon size={24} className="text-white group-hover:-translate-y-0.5 transition-transform duration-250" />
                 <span className="text-sm font-medium text-white">{action.label}</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#2DD4BF] group-hover:w-full transition-all duration-300" />
               </button>
             ))}
           </div>
@@ -253,8 +254,11 @@ export default function Homepage({ setCurrentPage }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {services.map((service) => (
               <button key={service.id} onClick={() => setCurrentPage(service.page)}
-                className="group p-6 bg-white border-2 border-gray-100 rounded-xl hover:border-[#2DD4BF] hover:shadow-lg transition-all text-left">
-                <div className={`w-12 h-12 ${service.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                className="group card-lift bocra-focusable p-6 bg-white border-2 border-gray-100 rounded-xl hover:shadow-xl transition-all text-left cursor-pointer"
+                style={{ '--hover-border': service.hoverBorder }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = service.hoverBorder}
+                onMouseLeave={e => e.currentTarget.style.borderColor = '#f3f4f6'}>
+                <div className={`w-12 h-12 ${service.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <service.icon size={24} className="text-white" />
                 </div>
                 <h3 className="font-semibold text-[#1E293B] mb-1">{service.name}</h3>
@@ -306,8 +310,8 @@ export default function Homepage({ setCurrentPage }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {consumerTools.map((tool) => (
-              <div key={tool.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-[#F97316] rounded-lg flex items-center justify-center mb-4">
+              <div key={tool.id} className="group card-lift bocra-focusable bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-[#002B7F] hover:shadow-xl cursor-pointer">
+                <div className="w-12 h-12 bg-[#F97316] rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <tool.icon size={24} className="text-white" />
                 </div>
                 <h3 className="font-semibold text-[#1E293B] mb-2">{tool.name}</h3>
@@ -332,7 +336,7 @@ export default function Homepage({ setCurrentPage }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             {/* Active Licenses */}
-            <button onClick={() => setCurrentPage('sector')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+            <button onClick={() => setCurrentPage('sector')} className="bocra-focusable bg-white/10 hover:bg-white/20 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 rounded-xl p-6 text-left cursor-pointer">
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">Active Licenses</span>
                 <span className="text-[#2DD4BF] font-bold text-lg">1,247</span>
@@ -358,7 +362,7 @@ export default function Homepage({ setCurrentPage }) {
             </button>
 
             {/* Complaints Resolved */}
-            <button onClick={() => setCurrentPage('sector')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+            <button onClick={() => setCurrentPage('sector')} className="bocra-focusable bg-white/10 hover:bg-white/20 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 rounded-xl p-6 text-left cursor-pointer">
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">Complaints Resolved</span>
                 <span className="text-[#2DD4BF] font-bold text-lg">12,450</span>
@@ -384,7 +388,7 @@ export default function Homepage({ setCurrentPage }) {
             </button>
 
             {/* .bw Domains */}
-            <button onClick={() => setCurrentPage('qos')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+            <button onClick={() => setCurrentPage('qos')} className="bocra-focusable bg-white/10 hover:bg-white/20 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 rounded-xl p-6 text-left cursor-pointer">
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">.bw Domains Registered</span>
                 <span className="text-[#2DD4BF] font-bold text-lg">24,589</span>
@@ -410,7 +414,7 @@ export default function Homepage({ setCurrentPage }) {
             </button>
 
             {/* Internet Penetration */}
-            <button onClick={() => setCurrentPage('sector')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+            <button onClick={() => setCurrentPage('sector')} className="bocra-focusable bg-white/10 hover:bg-white/20 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 rounded-xl p-6 text-left cursor-pointer">
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">Internet Penetration</span>
                 <span className="text-[#2DD4BF] font-bold text-lg">67.5%</span>
@@ -456,7 +460,7 @@ export default function Homepage({ setCurrentPage }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredNews.map(item => (
               <button key={item.id} onClick={() => setCurrentPage('news')}
-                className="border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-shadow text-left w-full">
+                className="card-lift bocra-focusable border border-gray-100 rounded-xl overflow-hidden hover:shadow-xl hover:border-[#002B7F]/20 transition-all text-left w-full cursor-pointer">
                 <div className="h-32 overflow-hidden">
                   {item.image
                     ? <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
@@ -475,7 +479,7 @@ export default function Homepage({ setCurrentPage }) {
             ))}
           </div>
           <div className="text-center mt-6">
-            <button onClick={() => setCurrentPage('news')} className="px-6 py-2.5 border-2 border-[#002B7F] text-[#002B7F] rounded-lg font-medium hover:bg-[#002B7F] hover:text-white transition-colors text-sm">
+            <button onClick={() => setCurrentPage('news')} className="bocra-focusable px-6 py-2.5 border-2 border-[#002B7F] text-[#002B7F] rounded-lg font-medium hover:bg-[#002B7F] hover:text-white hover:scale-105 hover:shadow-md transition-all duration-300 text-sm cursor-pointer">
               View All News & Events
             </button>
           </div>
@@ -494,8 +498,8 @@ export default function Homepage({ setCurrentPage }) {
               {complaintCategories.map(category => (
                 <button key={category}
                   onClick={() => handleProtectedAction('complaints', 'file a complaint')}
-                  className="p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-colors text-left">
-                  <AlertTriangle size={18} className="text-[#2DD4BF] mb-2" />
+                  className="group lift-sm bocra-focusable p-4 bg-white/10 rounded-xl hover:bg-white/25 hover:scale-105 transition-all duration-250 text-left cursor-pointer">
+                  <AlertTriangle size={18} className="text-[#2DD4BF] mb-2 group-hover:-translate-y-0.5 transition-transform" />
                   <div className="font-medium text-sm">{category}</div>
                 </button>
               ))}
@@ -525,7 +529,7 @@ export default function Homepage({ setCurrentPage }) {
                 ))}
               </div>
               <button onClick={() => handleProtectedAction('licensing', 'start a license application')}
-                className="px-6 py-3 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors inline-flex items-center gap-2 text-sm">
+                className="bocra-focusable px-6 py-3 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] hover:scale-105 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2 text-sm cursor-pointer">
                 Start Application <ArrowRight size={16} />
               </button>
             </div>
@@ -534,7 +538,7 @@ export default function Homepage({ setCurrentPage }) {
               <div className="space-y-2">
                 {['Telecommunications Service', 'Internet Service Provider', 'Value Added Services', 'Broadcasting', 'Postal Operator'].map(cat => (
                   <button key={cat} onClick={() => handleProtectedAction('licensing', `apply for a ${cat} license`)}
-                    className="flex items-center gap-3 p-3 bg-white rounded-lg w-full hover:shadow-sm transition-shadow text-left">
+                    className="bocra-focusable flex items-center gap-3 p-3 bg-white rounded-lg w-full hover:shadow-md hover:translate-x-1 hover:border-l-4 hover:border-[#002B7F] transition-all duration-200 text-left cursor-pointer">
                     <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
                     <span className="text-sm">{cat}</span>
                     <ChevronRight size={14} className="text-gray-300 ml-auto" />
@@ -557,7 +561,7 @@ export default function Homepage({ setCurrentPage }) {
               onKeyDown={e => e.key === 'Enter' && handleDomainCheck()}
               className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-[#2DD4BF] text-sm" />
             <span className="flex items-center px-3 py-3 bg-gray-100 rounded-lg text-gray-500 text-sm font-medium">.bw</span>
-            <button onClick={handleDomainCheck} className="px-5 py-3 bg-[#002B7F] text-white rounded-lg font-medium hover:bg-[#1a4a9e] transition-colors text-sm">Check</button>
+            <button onClick={handleDomainCheck} className="bocra-focusable px-5 py-3 bg-[#002B7F] text-white rounded-lg font-medium hover:bg-[#1a4a9e] hover:scale-105 hover:shadow-md transition-all duration-200 text-sm cursor-pointer">Check</button>
           </div>
           {domainResult && (
             <div className={`mt-4 p-4 rounded-lg text-sm font-medium ${domainResult.available ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
@@ -585,7 +589,7 @@ export default function Homepage({ setCurrentPage }) {
                 Vote Ms. Basedi Mosinyi — Botswana's Candidate to the ITU - Radio Regulation Board (RRB)
               </p>
               <div>
-                <button className="mt-1 px-5 py-2 bg-white hover:bg-gray-100 transition-colors text-[#002B7F] text-sm font-semibold rounded-lg">
+                <button className="bocra-focusable mt-1 px-5 py-2 bg-white hover:bg-gray-100 hover:scale-105 hover:shadow-md transition-all duration-200 text-[#002B7F] text-sm font-semibold rounded-lg cursor-pointer">
                   Find Out More
                 </button>
               </div>

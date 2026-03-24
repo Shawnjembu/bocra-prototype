@@ -191,7 +191,7 @@ export default function Header({ currentPage, setCurrentPage }) {
                         onMouseLeave={closeDropdownMenu}>
                         {(item.hasDropdown === 'about' ? aboutMenu : mandateMenu).map((menuItem, idx) => (
                           <button key={idx} onClick={() => { menuItem.action(); setOpenDropdown(null); }}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002B7F]">
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#002B7F] hover:pl-6 transition-all duration-150 cursor-pointer bocra-focusable">
                             {menuItem.label}
                           </button>
                         ))}
@@ -200,7 +200,7 @@ export default function Header({ currentPage, setCurrentPage }) {
                   </>
                 ) : (
                   <button onClick={() => setCurrentPage(item.id)}
-                    className={`font-medium transition-colors text-sm ${currentPage === item.id ? 'text-[#002B7F]' : 'text-gray-700 hover:text-[#002B7F]'}`}>
+                    className={`nav-underline bocra-focusable font-medium transition-colors text-sm cursor-pointer ${currentPage === item.id ? 'text-[#002B7F]' : 'text-gray-700 hover:text-[#002B7F]'}`}>
                     {item.label}
                   </button>
                 )}
@@ -257,7 +257,7 @@ export default function Header({ currentPage, setCurrentPage }) {
               <div className="relative" ref={signInRef}>
                 <button
                   onClick={() => setSignInOpen(!signInOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] transition-colors text-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-lg font-medium hover:bg-[#ea580c] hover:scale-105 hover:shadow-lg transition-all duration-200 cursor-pointer bocra-focusable text-sm"
                 >
                   Sign In <ChevronDown size={14} className={`transition-transform ${signInOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -267,7 +267,7 @@ export default function Header({ currentPage, setCurrentPage }) {
                     {ROLE_OPTIONS.map(role => (
                       <button key={role.id}
                         onClick={() => { setSignInOpen(false); setCurrentPage(`login-${role.id}`); }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 hover:pl-6 transition-all duration-150 cursor-pointer bocra-focusable">
                         <div className={`w-8 h-8 ${role.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
                           <role.icon size={15} className="text-white" />
                         </div>
@@ -299,7 +299,7 @@ export default function Header({ currentPage, setCurrentPage }) {
                   {section.items.map((item, itemIdx) => (
                     <li key={itemIdx}>
                       <button onClick={() => { item.action(); setMegaMenuOpen(false); }}
-                        className="text-gray-600 hover:text-[#002B7F] text-sm transition-colors">
+                        className="nav-underline bocra-focusable text-gray-600 hover:text-[#002B7F] text-sm transition-colors cursor-pointer">
                         {item.label}
                       </button>
                     </li>
