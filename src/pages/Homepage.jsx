@@ -44,10 +44,10 @@ export default function Homepage({ setCurrentPage }) {
   ];
 
   const news = [
-    { id: 1, category: 'news', date: 'March 15, 2024', title: 'BOCRA Launches New Online Licensing Portal', excerpt: 'The new portal provides a streamlined experience for license applicants.' },
-    { id: 2, category: 'speech', date: 'March 12, 2024', title: 'Keynote Address: Digital Transformation in Botswana', excerpt: 'CEO discusses the future of communications sector.' },
-    { id: 3, category: 'statement', date: 'March 10, 2024', title: 'Statement on Spectrum Allocation', excerpt: 'BOCRA announces new spectrum allocation guidelines.' },
-    { id: 4, category: 'news', date: 'March 8, 2024', title: 'New Consumer Protection Guidelines Effective', excerpt: 'Updated guidelines aim to strengthen consumer rights.' },
+    { id: 1, category: 'news', date: 'March 15, 2024', title: 'BOCRA Launches New Online Licensing Portal', excerpt: 'The new portal provides a streamlined experience for license applicants.', image: '/images/news/635036951_1347279590770115_3603102997177699115_n.jpg' },
+    { id: 2, category: 'speech', date: 'March 12, 2024', title: 'Keynote Address: Digital Transformation in Botswana', excerpt: 'CEO discusses the future of communications sector.', image: '/images/news/642800723_1356812449816829_990481576931445014_n.jpg' },
+    { id: 3, category: 'statement', date: 'March 10, 2024', title: 'Statement on Spectrum Allocation', excerpt: 'BOCRA announces new spectrum allocation guidelines.', image: '/images/news/647144726_1369366781894729_4830595175703378796_n.jpg' },
+    { id: 4, category: 'news', date: 'March 8, 2024', title: 'New Consumer Protection Guidelines Effective', excerpt: 'Updated guidelines aim to strengthen consumer rights.', image: '/images/news/649328637_1370840881747319_2084495551010995861_n.jpg' },
   ];
 
   const complaintCategories = ['Network Quality', 'Billing Dispute', 'Customer Service', 'Service Interruption', 'Data Privacy', 'Contract Issues'];
@@ -277,21 +277,6 @@ export default function Homepage({ setCurrentPage }) {
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { icon: AlertTriangle, label: 'File a Complaint', desc: 'Report a service issue', action: () => handleProtectedAction('complaints', 'file a complaint'), color: 'text-red-500' },
-              { icon: Shield, label: 'Apply for License', desc: 'Telecom, ISP, Broadcasting', action: () => handleProtectedAction('licensing', 'apply for a license'), color: 'text-[#002B7F]' },
-              { icon: Globe, label: 'Register .bw Domain', desc: 'Secure your online identity', action: () => setCurrentPage('qos'), color: 'text-indigo-500' },
-              { icon: Lock, label: 'Report Cyber Incident', desc: 'bwCIRT security portal', action: () => setCurrentPage('bwcirt'), color: 'text-orange-500' },
-            ].map((tool, idx) => (
-              <button key={idx} onClick={tool.action}
-                className="p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md hover:border-[#2DD4BF] transition-all text-left">
-                <tool.icon size={22} className={`${tool.color} mb-3`} />
-                <div className="font-semibold text-sm text-[#1E293B] mb-1">{tool.label}</div>
-                <div className="text-xs text-gray-500">{tool.desc}</div>
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -330,22 +315,112 @@ export default function Homepage({ setCurrentPage }) {
             <TrendingUp className="text-[#2DD4BF]" />
             <h2 className="text-2xl font-bold">Live Statistics</h2>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { value: '1,247', label: 'Active Licenses', trend: '+12', page: 'sector' },
-              { value: '12,450', label: 'Complaints Resolved', trend: '+89', page: 'sector' },
-              { value: '24,589', label: '.bw Domains', trend: '+156', page: 'qos' },
-              { value: '67.5%', label: 'Internet Penetration', trend: '+2.1%', page: 'sector' },
-            ].map((stat, idx) => (
-              <button key={idx} onClick={() => setCurrentPage(stat.page)}
-                className="bg-white/10 backdrop-blur rounded-xl p-6 text-left hover:bg-white/20 transition-colors">
-                <div className="text-3xl font-bold mb-2">{stat.value}</div>
-                <div className="flex items-center justify-between">
-                  <div className="text-white/80 text-sm">{stat.label}</div>
-                  <div className="text-[#2DD4BF] text-sm font-medium">{stat.trend}</div>
-                </div>
-              </button>
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {/* Active Licenses */}
+            <button onClick={() => setCurrentPage('sector')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">Active Licenses</span>
+                <span className="text-[#2DD4BF] font-bold text-lg">1,247</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { label: 'Telecommunications', value: 412, total: 1247, color: 'bg-[#2DD4BF]' },
+                  { label: 'Internet Service Providers', value: 318, total: 1247, color: 'bg-[#F97316]' },
+                  { label: 'Broadcasting (Radio)', value: 276, total: 1247, color: 'bg-purple-400' },
+                  { label: 'Broadcasting (TV)', value: 145, total: 1247, color: 'bg-yellow-400' },
+                  { label: 'Postal & Courier', value: 96, total: 1247, color: 'bg-green-400' },
+                ].map(({ label, value, total, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-xs text-white/70 mb-1">
+                      <span>{label}</span><span className="font-medium text-white">{value}</span>
+                    </div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${color}`} style={{ width: `${(value / total) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </button>
+
+            {/* Complaints Resolved */}
+            <button onClick={() => setCurrentPage('sector')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">Complaints Resolved</span>
+                <span className="text-[#2DD4BF] font-bold text-lg">12,450</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { label: 'Network Quality', value: 4210, total: 12450, color: 'bg-[#2DD4BF]' },
+                  { label: 'Billing Disputes', value: 3180, total: 12450, color: 'bg-[#F97316]' },
+                  { label: 'Customer Service', value: 2340, total: 12450, color: 'bg-purple-400' },
+                  { label: 'Service Interruption', value: 1620, total: 12450, color: 'bg-yellow-400' },
+                  { label: 'Data Privacy', value: 1100, total: 12450, color: 'bg-green-400' },
+                ].map(({ label, value, total, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-xs text-white/70 mb-1">
+                      <span>{label}</span><span className="font-medium text-white">{value.toLocaleString()}</span>
+                    </div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${color}`} style={{ width: `${(value / total) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </button>
+
+            {/* .bw Domains */}
+            <button onClick={() => setCurrentPage('qos')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">.bw Domains Registered</span>
+                <span className="text-[#2DD4BF] font-bold text-lg">24,589</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { label: 'co.bw (Commercial)', value: 11240, total: 24589, color: 'bg-[#2DD4BF]' },
+                  { label: 'org.bw (Organisations)', value: 5870, total: 24589, color: 'bg-[#F97316]' },
+                  { label: 'gov.bw (Government)', value: 3920, total: 24589, color: 'bg-purple-400' },
+                  { label: 'edu.bw (Education)', value: 2310, total: 24589, color: 'bg-yellow-400' },
+                  { label: 'net.bw (Network)', value: 1249, total: 24589, color: 'bg-green-400' },
+                ].map(({ label, value, total, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-xs text-white/70 mb-1">
+                      <span>{label}</span><span className="font-medium text-white">{value.toLocaleString()}</span>
+                    </div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${color}`} style={{ width: `${(value / total) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </button>
+
+            {/* Internet Penetration */}
+            <button onClick={() => setCurrentPage('sector')} className="bg-white/10 hover:bg-white/20 transition-colors rounded-xl p-6 text-left">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-sm text-white/80 uppercase tracking-wide">Internet Penetration</span>
+                <span className="text-[#2DD4BF] font-bold text-lg">67.5%</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { label: 'Mobile Broadband (4G/5G)', value: 72, total: 100, color: 'bg-[#2DD4BF]' },
+                  { label: 'Fixed Broadband', value: 18, total: 100, color: 'bg-[#F97316]' },
+                  { label: 'Urban Coverage', value: 94, total: 100, color: 'bg-purple-400' },
+                  { label: 'Rural Coverage', value: 48, total: 100, color: 'bg-yellow-400' },
+                  { label: '5G Readiness', value: 31, total: 100, color: 'bg-green-400' },
+                ].map(({ label, value, total, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-xs text-white/70 mb-1">
+                      <span>{label}</span><span className="font-medium text-white">{value}%</span>
+                    </div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${color}`} style={{ width: `${(value / total) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </button>
+
           </div>
         </div>
       </section>
@@ -368,8 +443,11 @@ export default function Homepage({ setCurrentPage }) {
             {filteredNews.map(item => (
               <button key={item.id} onClick={() => setCurrentPage('news')}
                 className="border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-shadow text-left w-full">
-                <div className="h-32 bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center">
-                  <TrendingUp size={32} className="text-white/40" />
+                <div className="h-32 overflow-hidden">
+                  {item.image
+                    ? <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center"><TrendingUp size={32} className="text-white/40" /></div>
+                  }
                 </div>
                 <div className="p-5">
                   <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
@@ -475,6 +553,33 @@ export default function Homepage({ setCurrentPage }) {
         </div>
       </section>
 
+      {/* Bulletin Board */}
+      <section className="bg-[#002B7F] text-white py-6">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center mb-4">
+            <span className="text-base font-bold tracking-wide text-white">BULLETIN BOARD</span>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <img
+              src="/images/advertboard/Screenshot 2026-03-24 085041.png"
+              alt="Vote Ms. Basedi Mosinyi"
+              className="w-40 h-40 object-cover rounded-xl flex-shrink-0 shadow-lg"
+            />
+            <div className="flex flex-col gap-3 text-center sm:text-left">
+              <p className="text-[#2DD4BF] font-bold text-lg leading-snug">Vote Now!</p>
+              <p className="text-white/90 text-base font-medium leading-relaxed">
+                Vote Ms. Basedi Mosinyi — Botswana's Candidate to the ITU - Radio Regulation Board (RRB)
+              </p>
+              <div>
+                <button className="mt-1 px-5 py-2 bg-white hover:bg-gray-100 transition-colors text-[#002B7F] text-sm font-semibold rounded-lg">
+                  Find Out More
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Tenders Ticker */}
       <section className="bg-[#002B7F] text-white py-3 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">
@@ -500,26 +605,6 @@ export default function Homepage({ setCurrentPage }) {
           </div>
         </div>
       </section>
-
-      {/* Sign In Portals Banner */}
-      {!isAuthenticated && (
-        <section className="py-10 bg-white border-t">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <h2 className="text-xl font-bold text-[#1E293B] mb-2">Access Your Portal</h2>
-            <p className="text-gray-500 text-sm mb-6">Sign in to your account to access personalised tools and services.</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <button onClick={() => setCurrentPage('login-citizen')}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#2DD4BF] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity">
-                <User size={16} /> Citizen / Member Sign In
-              </button>
-              <button onClick={() => setCurrentPage('login-admin')}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#002B7F] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity">
-                <Shield size={16} /> Admin Sign In
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Accessibility Toolbar */}
       <div className="fixed left-0 top-1/2 -translate-y-1/2 z-40 bg-white shadow-xl rounded-r-xl overflow-hidden">

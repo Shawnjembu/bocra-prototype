@@ -11,14 +11,14 @@ export default function NewsEvents({ setCurrentPage }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const news = [
-    { id: 1, category: 'news', date: 'March 15, 2024', title: 'BOCRA Launches New Online Licensing Portal', excerpt: 'The new portal provides a streamlined experience for license applicants with faster processing times.', image: 'licensing' },
-    { id: 2, category: 'news', date: 'March 12, 2024', title: 'New Consumer Protection Guidelines Effective April 1', excerpt: 'Updated guidelines aim to strengthen consumer rights in the digital age.', image: 'consumer' },
-    { id: 3, category: 'speech', date: 'March 10, 2024', title: 'Keynote Address: Digital Transformation in Botswana', excerpt: 'CEO discusses the future of communications sector at the annual tech summit.', image: 'speech' },
-    { id: 4, category: 'statement', date: 'March 8, 2024', title: 'Statement on Spectrum Allocation for 5G', excerpt: 'BOCRA announces new spectrum allocation guidelines for 5G network deployment.', image: 'spectrum' },
-    { id: 5, category: 'news', date: 'March 5, 2024', title: 'Botswana Internet Penetration Reaches 67.5%', excerpt: 'A significant increase from 61.3% in the previous year, according to new statistics.', image: 'internet' },
-    { id: 6, category: 'statement', date: 'March 1, 2024', title: 'Regulatory Update on International Roaming', excerpt: 'New guidelines for international roaming charges effective immediately.', image: 'roaming' },
-    { id: 7, category: 'news', date: 'February 25, 2024', title: 'Annual Industry Awards Ceremony Announced', excerpt: 'BOCRA to host the 10th Annual Communications Industry Awards in May.', image: 'awards' },
-    { id: 8, category: 'speech', date: 'February 20, 2024', title: 'Remarks at the National Digital Inclusion Forum', excerpt: 'Director General emphasizes the importance of digital literacy in rural communities.', image: 'digital' },
+    { id: 1, category: 'news', date: 'March 15, 2024', title: 'BOCRA Launches New Online Licensing Portal', excerpt: 'The new portal provides a streamlined experience for license applicants with faster processing times.', image: '/images/news/635036951_1347279590770115_3603102997177699115_n.jpg' },
+    { id: 2, category: 'news', date: 'March 12, 2024', title: 'New Consumer Protection Guidelines Effective April 1', excerpt: 'Updated guidelines aim to strengthen consumer rights in the digital age.', image: '/images/news/642800723_1356812449816829_990481576931445014_n.jpg' },
+    { id: 3, category: 'speech', date: 'March 10, 2024', title: 'Keynote Address: Digital Transformation in Botswana', excerpt: 'CEO discusses the future of communications sector at the annual tech summit.', image: '/images/news/647144726_1369366781894729_4830595175703378796_n.jpg' },
+    { id: 4, category: 'statement', date: 'March 8, 2024', title: 'Statement on Spectrum Allocation for 5G', excerpt: 'BOCRA announces new spectrum allocation guidelines for 5G network deployment.', image: '/images/news/649328637_1370840881747319_2084495551010995861_n.jpg' },
+    { id: 5, category: 'news', date: 'March 5, 2024', title: 'Botswana Internet Penetration Reaches 67.5%', excerpt: 'A significant increase from 61.3% in the previous year, according to new statistics.', image: '/images/news/649848734_1371119421719465_1734732717675627285_n.jpg' },
+    { id: 6, category: 'statement', date: 'March 1, 2024', title: 'Regulatory Update on International Roaming', excerpt: 'New guidelines for international roaming charges effective immediately.', image: '/images/news/650228203_1368627048635369_4703481901894621783_n.jpg' },
+    { id: 7, category: 'news', date: 'February 25, 2024', title: 'Annual Industry Awards Ceremony Announced', excerpt: 'BOCRA to host the 10th Annual Communications Industry Awards in May.', image: '/images/news/651237963_1370950965069644_7200932395616265379_n.jpg' },
+    { id: 8, category: 'speech', date: 'February 20, 2024', title: 'Remarks at the National Digital Inclusion Forum', excerpt: 'Director General emphasizes the importance of digital literacy in rural communities.', image: '/images/news/652348434_1370958211735586_6074915002884439388_n.jpg' },
   ];
 
   const events = [
@@ -132,8 +132,11 @@ export default function NewsEvents({ setCurrentPage }) {
             {filteredNews.length > 0 && newsFilter !== 'statement' && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-2">
-                  <div className="h-64 lg:h-auto bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center">
-                    <FileText size={64} className="text-white/50" />
+                  <div className="h-64 lg:h-auto overflow-hidden">
+                    {filteredNews[0].image
+                      ? <img src={filteredNews[0].image} alt={filteredNews[0].title} className="w-full h-full object-cover" />
+                      : <div className="w-full h-full bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center"><FileText size={64} className="text-white/50" /></div>
+                    }
                   </div>
                   <div className="p-8">
                     <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
@@ -154,10 +157,15 @@ export default function NewsEvents({ setCurrentPage }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredNews.slice(1).map((item) => (
                 <article key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="h-40 bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center">
-                    {item.category === 'speech' ? <Mic size={40} className="text-white/50" /> : 
-                     item.category === 'statement' ? <AlertCircle size={40} className="text-white/50" /> :
-                     <FileText size={40} className="text-white/50" />}
+                  <div className="h-40 overflow-hidden">
+                    {item.image
+                      ? <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                      : <div className="w-full h-full bg-gradient-to-br from-[#002B7F] to-[#1a4a9e] flex items-center justify-center">
+                          {item.category === 'speech' ? <Mic size={40} className="text-white/50" /> :
+                           item.category === 'statement' ? <AlertCircle size={40} className="text-white/50" /> :
+                           <FileText size={40} className="text-white/50" />}
+                        </div>
+                    }
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">

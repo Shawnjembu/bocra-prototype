@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /c/Users/Kabelo/Documents/GitHub/bocra-prototype/src/pages/*.jsx)"
+    ]
+  }
+}

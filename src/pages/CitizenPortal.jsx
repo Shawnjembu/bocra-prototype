@@ -28,81 +28,12 @@ function Toast({ msg, onClose }) {
   );
 }
 
-const AI_RESPONSES = {
-  citizen: {
-    'How do I file a complaint?': 'Go to the "My Complaints" tab and click "File New Complaint". Fill in the category, provider, and description. You\'ll receive a reference number immediately.',
-    'Track my application': 'Open the "My Applications" tab to see real-time status updates for all your license applications and complaints.',
-    'Tariff comparison help': 'Visit the "Consumer Tools" tab to compare mobile and internet plans side by side across all licensed operators.',
-    'Contact BOCRA support': 'Call us on +267 368 5000, email info@bocra.bw, or visit our offices at plot 50671, Fairgrounds, Gaborone. Office hours: Mon–Fri, 7:30AM–4:30PM.',
-  },
-  admin: {
-    'Pending applications summary': 'You have new license applications awaiting review. Go to the License Applications tab to approve or request more documents.',
-    'Open complaints count': 'Check the Complaints tab for all unresolved complaints. You can assign them to a team member or mark them as resolved.',
-    'Draft tenders': 'Head to the Tenders tab to review and publish draft tender notices.',
-  },
-  superadmin: {
-    'System health status': 'All core systems are operational. Email notifications are showing minor degradation (98.1% uptime). Check the Overview tab for details.',
-    'Active admin accounts': 'View and manage all admin accounts in the Admin Accounts tab. You can activate, deactivate, or change roles there.',
-    'Recent audit events': 'The Audit Log tab shows a full timestamped record of all system actions. You can filter by module and export to CSV.',
-  },
+const CITIZEN_AI_RESPONSES = {
+  'How do I file a complaint?': 'Go to the "My Complaints" tab and click "File New Complaint". Fill in the category, provider, and description. You\'ll receive a reference number immediately.',
+  'Track my application': 'Open the "My Applications" tab to see real-time status updates for all your license applications and complaints.',
+  'Tariff comparison help': 'Visit the "Consumer Tools" tab to compare mobile and internet plans side by side across all licensed operators.',
+  'Contact BOCRA support': 'Call us on +267 368 5000, email info@bocra.bw, or visit our offices at plot 50671, Fairgrounds, Gaborone. Office hours: Mon–Fri, 7:30AM–4:30PM.',
 };
-
-function AiAssistant({ prompts, context }) {
-  const [messages, setMessages] = useState([
-    { type: 'bot', text: "Hi! I'm BOTSI, your BOCRA AI assistant. How can I help you today?" }
-  ]);
-  const [input, setInput] = useState('');
-
-  const send = (text) => {
-    const q = text || input;
-    if (!q.trim()) return;
-    setInput('');
-    setMessages(prev => [...prev, { type: 'user', text: q }]);
-    const responseMap = AI_RESPONSES[context] || {};
-    const reply = responseMap[q] || "I don't have a specific answer for that. Please contact BOCRA directly at +267 368 5000 or info@bocra.bw.";
-    setTimeout(() => setMessages(prev => [...prev, { type: 'bot', text: reply }]), 600);
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="bg-[#002B7F] text-white px-5 py-3 flex items-center gap-3">
-        <MessageCircle size={18} className="text-[#2DD4BF]" />
-        <div>
-          <p className="font-semibold text-sm">BOCRA AI Assistant</p>
-          <p className="text-xs text-blue-300">Powered by BOTSI · Online</p>
-        </div>
-      </div>
-      <div className="p-4 max-h-48 overflow-y-auto space-y-2">
-        {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${m.type === 'user' ? 'bg-[#002B7F] text-white' : 'bg-gray-100 text-gray-800'}`}>
-              {m.text}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="px-4 pb-3">
-        <div className="flex flex-wrap gap-2 mb-2">
-          {prompts.map(p => (
-            <button key={p} onClick={() => send(p)}
-              className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full hover:bg-[#2DD4BF]/20 hover:text-[#002B7F] transition-colors">
-              {p}
-            </button>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <input value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && send()}
-            placeholder="Ask a question..."
-            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#2DD4BF]" />
-          <button onClick={() => send()} className="p-2 bg-[#002B7F] text-white rounded-lg hover:bg-[#1a4a9e] transition-colors">
-            <Send size={15} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function CitizenPortal({ setCurrentPage }) {
   const { user } = useAuth();
@@ -120,6 +51,20 @@ export default function CitizenPortal({ setCurrentPage }) {
   const [incidentSubmitted, setIncidentSubmitted] = useState(false);
   const [imeiInput, setImeiInput] = useState('');
   const [imeiResult, setImeiResult] = useState(null);
+  const [showChat, setShowChat] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { type: 'bot', text: "Hi! I'm BOTSI, your BOCRA AI assistant. How can I help you today?" }
+  ]);
+
+  const sendChat = (text) => {
+    const q = text || chatInput;
+    if (!q.trim()) return;
+    setChatInput('');
+    setChatMessages(prev => [...prev, { type: 'user', text: q }]);
+    const reply = CITIZEN_AI_RESPONSES[q] || "I don't have a specific answer for that. Please contact BOCRA directly at +267 368 5000 or info@bocra.bw.";
+    setTimeout(() => setChatMessages(prev => [...prev, { type: 'bot', text: reply }]), 600);
+  };
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
@@ -223,12 +168,6 @@ export default function CitizenPortal({ setCurrentPage }) {
                 </div>
               ))}
             </div>
-
-            {/* BOTSI AI Assistant */}
-            <AiAssistant
-              prompts={['How do I file a complaint?', 'Track my application', 'Tariff comparison help', 'Contact BOCRA support']}
-              context="citizen"
-            />
 
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
@@ -591,6 +530,56 @@ export default function CitizenPortal({ setCurrentPage }) {
               <button onClick={() => setCurrentPage('bwcirt')} className="mt-4 text-[#002B7F] text-sm font-medium flex items-center gap-1 hover:gap-2 transition-all">
                 Full bwCIRT Portal <ArrowRight size={14} />
               </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* BOTSI Floating Chat */}
+      <div className="fixed bottom-6 right-6 z-40">
+        {!showChat ? (
+          <button onClick={() => setShowChat(true)}
+            className="w-14 h-14 bg-[#002B7F] rounded-full shadow-lg flex items-center justify-center hover:bg-[#1a4a9e] transition-colors">
+            <MessageCircle size={26} className="text-white" />
+          </button>
+        ) : (
+          <div className="w-80 h-96 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+            <div className="bg-[#002B7F] text-white p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center">
+                  <MessageCircle size={18} />
+                </div>
+                <div><div className="font-semibold text-sm">BOTSI</div><div className="text-xs text-white/70">BOCRA Assistant · Online</div></div>
+              </div>
+              <button onClick={() => setShowChat(false)} className="text-white/60 hover:text-white"><X size={18} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {chatMessages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] p-3 rounded-xl text-sm ${msg.type === 'user' ? 'bg-[#002B7F] text-white' : 'bg-gray-100 text-gray-800'}`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="px-4 pb-3 pt-2 border-t space-y-2">
+              <div className="flex flex-wrap gap-1">
+                {['How do I file a complaint?', 'Tariff comparison help', 'Contact BOCRA support'].map(p => (
+                  <button key={p} onClick={() => sendChat(p)}
+                    className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full hover:bg-[#2DD4BF]/20 hover:text-[#002B7F] transition-colors">
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && sendChat()}
+                  placeholder="Ask a question..."
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#2DD4BF] text-sm" />
+                <button onClick={() => sendChat()} className="p-2 bg-[#002B7F] text-white rounded-lg hover:bg-[#1a4a9e]">
+                  <Send size={16} />
+                </button>
+              </div>
             </div>
           </div>
         )}
