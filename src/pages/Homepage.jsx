@@ -50,7 +50,6 @@ export default function Homepage({ setCurrentPage }) {
     { id: 4, category: 'news', date: 'March 8, 2024', title: 'New Consumer Protection Guidelines Effective', excerpt: 'Updated guidelines aim to strengthen consumer rights.', image: '/images/news/649328637_1370840881747319_2084495551010995861_n.jpg' },
   ];
 
-  const complaintCategories = ['Network Quality', 'Billing Dispute', 'Customer Service', 'Service Interruption', 'Data Privacy', 'Contract Issues'];
   const filteredNews = newsFilter === 'all' ? news : news.filter(n => n.category === newsFilter);
 
   // FCC-style search
@@ -486,27 +485,6 @@ export default function Homepage({ setCurrentPage }) {
         </div>
       </section>
 
-      {/* Quick Complaint */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-[#002B7F] to-[#1a4a9e] rounded-2xl p-8 text-white">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold mb-2">Quick Complaint Filing</h2>
-              <p className="text-white/80">Select a category to file your complaint</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {complaintCategories.map(category => (
-                <button key={category}
-                  onClick={() => handleProtectedAction('complaints', 'file a complaint')}
-                  className="group lift-sm bocra-focusable p-4 bg-white/10 rounded-xl hover:bg-white/25 hover:scale-105 transition-all duration-250 text-left cursor-pointer">
-                  <AlertTriangle size={18} className="text-[#2DD4BF] mb-2 group-hover:-translate-y-0.5 transition-transform" />
-                  <div className="font-medium text-sm">{category}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* License Application */}
       <section className="py-12 bg-white">

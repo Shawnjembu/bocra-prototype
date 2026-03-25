@@ -425,9 +425,46 @@ function AnalyticsTab() {
     { role: 'Super Admin', sessions: 15,   actions: 890,   color: 'text-yellow-700 bg-yellow-50' },
   ];
 
+  const activeUsersByHour = [142, 198, 231, 187, 265, 312, 287, 344, 401, 378, 356, 298];
+  const maxActive = Math.max(...activeUsersByHour);
+  const hours = ['8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm'];
+
   return (
     <div className="space-y-8">
       <SectionHeader title="System Analytics" />
+
+      {/* Active Users Now */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'Active Right Now', value: '312', sub: '↑ 18 from last hour', color: 'bg-green-500' },
+          { label: 'Today\'s Logins', value: '1,847', sub: 'Across all roles', color: 'bg-blue-500' },
+          { label: 'Avg Session', value: '6m 42s', sub: 'Per user today', color: 'bg-purple-500' },
+          { label: 'Peak Today', value: '401', sub: 'At 4:00 PM', color: 'bg-orange-500' },
+        ].map(card => (
+          <div key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <div className={`w-8 h-1.5 ${card.color} rounded-full mb-3`} />
+            <p className="text-2xl font-black text-gray-800">{card.value}</p>
+            <p className="text-xs font-semibold text-gray-500 mt-0.5">{card.label}</p>
+            <p className="text-xs text-green-600 mt-1">{card.sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Active Users by Hour */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-base font-bold text-gray-800 mb-5">Active Users — Today by Hour</h3>
+        <div className="flex items-end gap-2 h-32">
+          {activeUsersByHour.map((v, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <span className="text-xs font-bold text-gray-500">{v}</span>
+              <div className="w-full rounded-t-lg bg-[#002B7F]"
+                style={{ height: `${(v / maxActive) * 96}px`, opacity: i === 8 ? 1 : 0.55 }} />
+              <span className="text-xs text-gray-400">{hours[i]}</span>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-gray-400 mt-2">Highlighted bar = peak hour today</p>
+      </div>
 
       {/* Complaints by Month - Vertical Bar Chart */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

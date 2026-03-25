@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Shield, User, Building2, Lock, Eye, EyeOff, ArrowLeft, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, User, Building2, Lock, Eye, EyeOff, ArrowLeft, ChevronDown, RefreshCw, Mail, CheckCircle } from 'lucide-react';
 import { useAuth, MOCK_CREDENTIALS } from '../context/AuthContext';
 
 const ROLES = [
@@ -8,6 +8,12 @@ const ROLES = [
   { id: 'admin', label: 'Admin', icon: Shield, color: 'bg-[#002B7F]', description: 'Manage applications, complaints, content', portal: 'admin' },
   { id: 'superadmin', label: 'Super Admin', icon: Lock, color: 'bg-red-600', description: 'Full system control, user & role management', portal: 'superadmin' },
 ];
+
+function generateCaptcha() {
+  const a = Math.floor(Math.random() * 9) + 1;
+  const b = Math.floor(Math.random() * 9) + 1;
+  return { question: `${a} + ${b}`, answer: String(a + b) };
+}
 
 export default function LoginPage({ setCurrentPage, preselectedRole }) {
   const { login } = useAuth();
@@ -18,6 +24,12 @@ export default function LoginPage({ setCurrentPage, preselectedRole }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [captcha, setCaptcha] = useState(generateCaptcha);
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [emailConfirmScreen, setEmailConfirmScreen] = useState(false);
+  const [resent, setResent] = useState(false);
+
+  useEffect(() => { setCaptchaInput(''); setCaptcha(generateCaptcha()); }, [selectedRole]);
 
   const roleConfig = ROLES.find(r => r.id === selectedRole);
 
@@ -25,14 +37,24 @@ export default function LoginPage({ setCurrentPage, preselectedRole }) {
     e.preventDefault();
     setError('');
     if (!selectedRole) { setError('Please select an account type.'); return; }
+    if (captchaInput.trim() !== captcha.answer) {
+      setError('Incorrect CAPTCHA answer. Please try again.');
+      setCaptcha(generateCaptcha()); setCaptchaInput(''); return;
+    }
     setLoading(true);
     setTimeout(() => {
       const creds = MOCK_CREDENTIALS[selectedRole];
       if (email === creds.email && password === creds.password) {
-        login(selectedRole);
-        setCurrentPage(roleConfig.portal);
+        if (selectedRole === 'citizen') {
+          setEmailConfirmScreen(true);
+          setTimeout(() => { login(selectedRole); setCurrentPage(roleConfig.portal); }, 3000);
+        } else {
+          login(selectedRole);
+          setCurrentPage(roleConfig.portal);
+        }
       } else {
         setError('Invalid email or password. Use the demo credentials shown below.');
+        setCaptcha(generateCaptcha()); setCaptchaInput('');
       }
       setLoading(false);
     }, 800);
@@ -40,12 +62,52 @@ export default function LoginPage({ setCurrentPage, preselectedRole }) {
 
   const handleDemoLogin = () => {
     if (!selectedRole) { setError('Please select an account type first.'); return; }
+    if (captchaInput.trim() !== captcha.answer) {
+      setError('Incorrect CAPTCHA answer. Please try again.');
+      setCaptcha(generateCaptcha()); setCaptchaInput(''); return;
+    }
     setLoading(true);
     setTimeout(() => {
-      login(selectedRole);
-      setCurrentPage(roleConfig.portal);
+      if (selectedRole === 'citizen') {
+        setEmailConfirmScreen(true);
+        setTimeout(() => { login(selectedRole); setCurrentPage(roleConfig.portal); }, 3000);
+      } else {
+        login(selectedRole);
+        setCurrentPage(roleConfig.portal);
+      }
     }, 600);
   };
+
+  // Email confirmation screen
+  if (emailConfirmScreen) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#002B7F] via-[#1a4a9e] to-[#2DD4BF] flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full text-center">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail size={36} className="text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-[#002B7F] mb-2">Check Your Email</h2>
+          <p className="text-gray-500 text-sm mb-1">A confirmation link has been sent to</p>
+          <p className="font-semibold text-gray-800 mb-6">{email || MOCK_CREDENTIALS.citizen.email}</p>
+          <div className="flex items-center gap-2 bg-blue-50 rounded-xl p-4 mb-6 text-left">
+            <CheckCircle size={18} className="text-blue-500 flex-shrink-0" />
+            <p className="text-xs text-blue-700">Click the link in your email to verify your account. You'll be redirected to your portal automatically…</p>
+          </div>
+          <div className="flex items-center gap-2 justify-center text-xs text-gray-400 mb-6">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            Redirecting to your portal in a moment…
+          </div>
+          {!resent ? (
+            <button onClick={() => setResent(true)} className="text-[#002B7F] text-sm font-medium hover:underline flex items-center gap-1 mx-auto">
+              <RefreshCw size={14} /> Resend confirmation email
+            </button>
+          ) : (
+            <p className="text-green-600 text-sm font-medium">Email resent successfully!</p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#002B7F] via-[#1a4a9e] to-[#2DD4BF] flex items-center justify-center p-4">
@@ -142,6 +204,28 @@ export default function LoginPage({ setCurrentPage, preselectedRole }) {
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* CAPTCHA */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Security Check</label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 bg-[#002B7F] text-white font-mono font-bold px-4 py-2.5 rounded-lg text-sm tracking-widest select-none">
+                      {captcha.question} = ?
+                    </div>
+                    <input
+                      type="text"
+                      value={captchaInput}
+                      onChange={e => setCaptchaInput(e.target.value)}
+                      placeholder="Answer"
+                      maxLength={2}
+                      className="w-20 px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#002B7F] transition-colors text-center font-bold"
+                    />
+                    <button type="button" onClick={() => { setCaptcha(generateCaptcha()); setCaptchaInput(''); }}
+                      className="text-gray-400 hover:text-[#002B7F] transition-colors" title="New question">
+                      <RefreshCw size={16} />
                     </button>
                   </div>
                 </div>

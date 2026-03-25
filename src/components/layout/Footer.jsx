@@ -20,18 +20,18 @@ export default function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               The Botswana Communications Regulatory Authority (BOCRA) is responsible for regulating the communications sector in Botswana.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-[#2DD4BF] transition-colors">
-                <Facebook size={20} />
+            <div className="flex gap-3">
+              <a href="#" title="Facebook" className="w-9 h-9 rounded-full flex items-center justify-center bg-[#1877F2] hover:scale-110 hover:shadow-lg transition-all duration-200">
+                <Facebook size={18} className="text-white" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#2DD4BF] transition-colors">
-                <Twitter size={20} />
+              <a href="#" title="X / Twitter" className="w-9 h-9 rounded-full flex items-center justify-center bg-black hover:scale-110 hover:shadow-lg transition-all duration-200">
+                <Twitter size={18} className="text-white" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#2DD4BF] transition-colors">
-                <Linkedin size={20} />
+              <a href="#" title="LinkedIn" className="w-9 h-9 rounded-full flex items-center justify-center bg-[#0A66C2] hover:scale-110 hover:shadow-lg transition-all duration-200">
+                <Linkedin size={18} className="text-white" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#2DD4BF] transition-colors">
-                <Youtube size={20} />
+              <a href="#" title="YouTube" className="w-9 h-9 rounded-full flex items-center justify-center bg-[#FF0000] hover:scale-110 hover:shadow-lg transition-all duration-200">
+                <Youtube size={18} className="text-white" />
               </a>
             </div>
           </div>

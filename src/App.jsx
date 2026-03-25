@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { X, ShieldCheck } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import VotingSystem from './pages/VotingSystem';
@@ -29,6 +30,43 @@ import TypeApprovalPage from './pages/TypeApprovalPage';
 import AdminPortal from './pages/AdminPortal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import LoginPage from './pages/LoginPage';
+
+function PrivacyBanner() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const accepted = localStorage.getItem('bocra_privacy_accepted');
+    if (!accepted) setVisible(true);
+  }, []);
+
+  const accept = () => { localStorage.setItem('bocra_privacy_accepted', '1'); setVisible(false); };
+
+  if (!visible) return null;
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#1E293B] border-t-4 border-[#2DD4BF] shadow-2xl">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <ShieldCheck size={28} className="text-[#2DD4BF] flex-shrink-0 mt-0.5 sm:mt-0" />
+        <p className="text-sm text-gray-300 flex-1">
+          BOCRA uses cookies and processes personal data in accordance with the{' '}
+          <span className="text-[#2DD4BF] font-medium cursor-pointer hover:underline">Privacy Policy</span>
+          {' '}and{' '}
+          <span className="text-[#2DD4BF] font-medium cursor-pointer hover:underline">Terms of Service</span>.
+          By continuing you consent to our use of cookies for analytics and security purposes.
+        </p>
+        <div className="flex gap-3 flex-shrink-0">
+          <button onClick={accept}
+            className="px-5 py-2 bg-[#2DD4BF] text-[#002B7F] font-bold rounded-lg text-sm hover:bg-white transition-colors">
+            Accept & Continue
+          </button>
+          <button onClick={() => setVisible(false)}
+            className="p-2 text-gray-400 hover:text-white transition-colors">
+            <X size={18} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -149,6 +187,7 @@ function AppContent() {
         {renderPage()}
       </main>
       <Footer />
+      <PrivacyBanner />
     </div>
   );
 }
