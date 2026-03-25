@@ -1,11 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { mockData } from '../context/AuthContext';
 import {
   Users, Shield, BarChart2, ClipboardList, Activity,
   CheckCircle, XCircle, Pencil, Plus, Download,
   Server, Clock, Database, AlertTriangle, MessageCircle, Send, X,
-  Headphones, Inbox, Eye, ArrowUpCircle, FileText
+  Headphones, Inbox, Eye, ArrowUpCircle, FileText, Bell
 } from 'lucide-react';
+
+const SA_NOTIFICATIONS = [
+  { id: 1, title: 'Admin Account Created', body: 'New admin account for Lorato Dube is pending activation.', time: '3 min ago', read: false, type: 'admin' },
+  { id: 2, title: 'Security Alert', body: '3 failed login attempts on admin@bocra.bw from IP 196.x.x.x.', time: '18 min ago', read: false, type: 'security' },
+  { id: 3, title: 'System Backup Complete', body: 'Daily database backup completed successfully — 2.3 GB.', time: '1 hr ago', read: false, type: 'system' },
+  { id: 4, title: 'Audit Log: Role Changed', body: 'Admin Kgosi Tiro role updated from viewer to editor.', time: '4 hrs ago', read: true, type: 'audit' },
+  { id: 5, title: 'Server Uptime: 30 days', body: 'All primary servers have maintained 99.9% uptime this month.', time: 'Yesterday', read: true, type: 'system' },
+];
+
+function SANotificationDropdown({ notifications, onClose, onMarkAll }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, [onClose]);
+  const typeColor = { admin: 'bg-blue-100 text-blue-700', security: 'bg-red-100 text-red-700', system: 'bg-green-100 text-green-700', audit: 'bg-yellow-100 text-yellow-700' };
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
+        <span className="font-bold text-gray-800 text-sm">System Notifications</span>
+        <button onClick={onMarkAll} className="text-xs text-[#002B7F] font-medium hover:underline">Mark all read</button>
+      </div>
+      <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
+        {notifications.map(n => (
+          <div key={n.id} className={`px-4 py-3 flex gap-3 ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
+            <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-gray-300' : 'bg-red-500'}`} />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-800 truncate">{n.title}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
+              <span className={`text-xs font-medium mt-1 inline-block px-1.5 py-0.5 rounded ${typeColor[n.type] || 'bg-gray-100 text-gray-600'}`}>{n.time}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 border-t text-center">
+        <button className="text-xs text-[#002B7F] font-medium hover:underline">View full audit log</button>
+      </div>
+    </div>
+  );
+}
 
 const AI_SA_RESPONSES = {
   'System health status': 'All core systems are operational. Email notifications show minor degradation (98.1% uptime). No critical incidents in the last 24 hours.',
@@ -900,11 +941,12 @@ export default function SuperAdminDashboard({ setCurrentPage }) {
   const [admins,       setAdmins]       = useState(mockData.adminUsers);
   const [techRequests, setTechRequests] = useState(INITIAL_TECH_REQUESTS);
   const [toast,        setToast]        = useState(null);
-  const [showChat,     setShowChat]     = useState(false);
-  const [chatInput,    setChatInput]    = useState('');
-  const [chatMessages, setChatMessages] = useState([
-    { type: 'bot', text: "Hi! I'm BOTSI. I can give you a quick system overview or help you navigate." }
-  ]);
+  const [showChat,          setShowChat]          = useState(false);
+  const [chatInput,         setChatInput]         = useState('');
+  const [chatMessages,      setChatMessages]      = useState([{ type: 'bot', text: "Hi! I'm BOTSI. I can give you a quick system overview or help you navigate." }]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications,     setNotifications]     = useState(SA_NOTIFICATIONS);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const sendChat = (text) => {
     const q = text || chatInput;
@@ -930,13 +972,31 @@ export default function SuperAdminDashboard({ setCurrentPage }) {
             <h1 className="text-2xl font-extrabold tracking-tight">System Dashboard</h1>
             <p className="text-blue-200 text-sm mt-0.5">BOCRA Internal Administration — Full System Access</p>
           </div>
-          <div className="text-right">
-            <p className="text-blue-200 text-xs">Logged in as</p>
-            <p className="text-white font-bold text-sm">Director of IT Systems</p>
-            <button onClick={() => setCurrentPage && setCurrentPage('home')}
-              className="text-xs text-blue-300 hover:text-white transition-colors mt-1 block">
-              &larr; Back to Site
-            </button>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <button onClick={() => setShowNotifications(v => !v)}
+                className="relative p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-white">
+                <Bell size={18} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center font-bold">{unreadCount}</span>
+                )}
+              </button>
+              {showNotifications && (
+                <SANotificationDropdown
+                  notifications={notifications}
+                  onClose={() => setShowNotifications(false)}
+                  onMarkAll={() => setNotifications(n => n.map(x => ({ ...x, read: true })))}
+                />
+              )}
+            </div>
+            <div className="text-right">
+              <p className="text-blue-200 text-xs">Logged in as</p>
+              <p className="text-white font-bold text-sm">Director of IT Systems</p>
+              <button onClick={() => setCurrentPage && setCurrentPage('home')}
+                className="text-xs text-blue-300 hover:text-white transition-colors mt-1 block">
+                &larr; Back to Site
+              </button>
+            </div>
           </div>
         </div>
       </div>

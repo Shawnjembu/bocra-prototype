@@ -1,9 +1,51 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   FileText, Clock, CheckCircle, AlertTriangle, TrendingUp, Zap, Phone,
   ArrowRight, Shield, X, User, Bell, Lock, RefreshCw, MessageCircle, Send
 } from 'lucide-react';
 import { useAuth, mockData } from '../context/AuthContext';
+
+const CITIZEN_NOTIFICATIONS = [
+  { id: 1, title: 'Complaint CMP-2024-001 Updated', body: 'Your complaint has been assigned to an agent.', time: '2 min ago', read: false, type: 'complaint' },
+  { id: 2, title: 'License Application Received', body: 'Your application LIC-APP-001 is under review.', time: '1 hr ago', read: false, type: 'license' },
+  { id: 3, title: 'BOCRA Alert: Network Advisory', body: 'Scheduled maintenance on Orange Botswana — 18 Mar 02:00–04:00.', time: '3 hrs ago', read: true, type: 'alert' },
+  { id: 4, title: 'Speed Test Completed', body: 'Your last speed test result: 24.3 Mbps download.', time: 'Yesterday', read: true, type: 'info' },
+];
+
+function NotificationDropdown({ notifications, onClose, onMarkAll }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, [onClose]);
+
+  const typeColor = { complaint: 'bg-orange-100 text-orange-600', license: 'bg-blue-100 text-blue-600', alert: 'bg-red-100 text-red-600', info: 'bg-green-100 text-green-600' };
+
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
+        <span className="font-bold text-gray-800 text-sm">Notifications</span>
+        <button onClick={onMarkAll} className="text-xs text-[#002B7F] font-medium hover:underline">Mark all read</button>
+      </div>
+      <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
+        {notifications.map(n => (
+          <div key={n.id} className={`px-4 py-3 flex gap-3 ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
+            <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-gray-300' : 'bg-[#F97316]'}`} />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-800 truncate">{n.title}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
+              <span className={`text-xs font-medium mt-1 inline-block px-1.5 py-0.5 rounded ${typeColor[n.type]}`}>{n.time}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 border-t text-center">
+        <button className="text-xs text-[#002B7F] font-medium hover:underline">View all notifications</button>
+      </div>
+    </div>
+  );
+}
 
 const TABS = ['Dashboard', 'My Complaints', 'My Applications', 'Consumer Tools', 'bwCIRT'];
 
@@ -51,6 +93,9 @@ export default function CitizenPortal({ setCurrentPage }) {
   const [incidentSubmitted, setIncidentSubmitted] = useState(false);
   const [imeiInput, setImeiInput] = useState('');
   const [imeiResult, setImeiResult] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(CITIZEN_NOTIFICATIONS);
+  const unreadCount = notifications.filter(n => !n.read).length;
   const [showChat, setShowChat] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([
@@ -129,10 +174,21 @@ export default function CitizenPortal({ setCurrentPage }) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
-                <Bell size={18} />
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F97316] rounded-full text-xs flex items-center justify-center">2</span>
-              </button>
+              <div className="relative">
+                <button onClick={() => setShowNotifications(v => !v)} className="relative p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
+                  <Bell size={18} />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F97316] rounded-full text-xs flex items-center justify-center font-bold">{unreadCount}</span>
+                  )}
+                </button>
+                {showNotifications && (
+                  <NotificationDropdown
+                    notifications={notifications}
+                    onClose={() => setShowNotifications(false)}
+                    onMarkAll={() => setNotifications(n => n.map(x => ({ ...x, read: true })))}
+                  />
+                )}
+              </div>
               <button onClick={() => setCurrentPage('home')} className="px-4 py-2 bg-white/10 rounded-lg text-sm hover:bg-white/20 transition-colors">← Home</button>
             </div>
           </div>

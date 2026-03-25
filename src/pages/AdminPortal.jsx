@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { mockData } from '../context/AuthContext';
 import {
   LayoutDashboard, FileText, MessageSquare, Briefcase,
@@ -6,8 +6,49 @@ import {
   ChevronDown, Plus, Upload, Pencil, Globe, GlobeLock,
   RefreshCw, Trash2, MessageCircle, Send, X,
   Headphones, HelpCircle, ShieldAlert, Database,
-  Bug, ChevronRight
+  Bug, ChevronRight, Bell
 } from 'lucide-react';
+
+const ADMIN_NOTIFICATIONS = [
+  { id: 1, title: 'New License Application', body: 'BTS Mobile Ltd submitted APP-2024-088 for review.', time: '5 min ago', read: false, type: 'license' },
+  { id: 2, title: 'Complaint Escalated', body: 'CMP-2024-003 escalated to senior review — billing dispute.', time: '22 min ago', read: false, type: 'complaint' },
+  { id: 3, title: 'Tender Deadline Tomorrow', body: 'TDR-2024-005 closes at 17:00 tomorrow.', time: '1 hr ago', read: false, type: 'tender' },
+  { id: 4, title: 'Report Published', body: 'Q4 2023 Annual Report is now live on the portal.', time: '3 hrs ago', read: true, type: 'info' },
+  { id: 5, title: 'System: Login from new device', body: 'Your account was accessed from a new browser. Verify if this was you.', time: 'Yesterday', read: true, type: 'security' },
+];
+
+function AdminNotificationDropdown({ notifications, onClose, onMarkAll }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, [onClose]);
+  const typeColor = { license: 'bg-blue-100 text-blue-700', complaint: 'bg-orange-100 text-orange-700', tender: 'bg-purple-100 text-purple-700', info: 'bg-green-100 text-green-700', security: 'bg-red-100 text-red-700' };
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
+        <span className="font-bold text-gray-800 text-sm">Notifications</span>
+        <button onClick={onMarkAll} className="text-xs text-[#002B7F] font-medium hover:underline">Mark all read</button>
+      </div>
+      <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
+        {notifications.map(n => (
+          <div key={n.id} className={`px-4 py-3 flex gap-3 ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
+            <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-gray-300' : 'bg-[#F97316]'}`} />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-800 truncate">{n.title}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
+              <span className={`text-xs font-medium mt-1 inline-block px-1.5 py-0.5 rounded ${typeColor[n.type]}`}>{n.time}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-4 py-2 border-t text-center">
+        <button className="text-xs text-[#002B7F] font-medium hover:underline">View all notifications</button>
+      </div>
+    </div>
+  );
+}
 
 const AI_ADMIN_RESPONSES = {
   'Pending applications summary': 'Check the License Applications tab. Filter by "pending" or "under_review" to see items awaiting action.',
@@ -1075,11 +1116,12 @@ export default function AdminPortal({ setCurrentPage }) {
   const [reports,      setReports]      = useState(mockData.reports);
   const [techRequests, setTechRequests] = useState(INITIAL_TECH_REQUESTS);
   const [toast,        setToast]        = useState(null);
-  const [showChat,     setShowChat]     = useState(false);
-  const [chatInput,    setChatInput]    = useState('');
-  const [chatMessages, setChatMessages] = useState([
-    { type: 'bot', text: "Hi! I'm BOTSI. Ask me about pending tasks or navigate to any section." }
-  ]);
+  const [showChat,          setShowChat]          = useState(false);
+  const [chatInput,         setChatInput]         = useState('');
+  const [chatMessages,      setChatMessages]      = useState([{ type: 'bot', text: "Hi! I'm BOTSI. Ask me about pending tasks or navigate to any section." }]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications,     setNotifications]     = useState(ADMIN_NOTIFICATIONS);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const showToast = (msg) => setToast(msg);
 
@@ -1101,10 +1143,28 @@ export default function AdminPortal({ setCurrentPage }) {
             <h1 className="text-2xl font-extrabold tracking-tight">Admin Portal</h1>
             <p className="text-blue-200 text-sm mt-0.5">BOCRA Internal Management System</p>
           </div>
-          <button onClick={() => setCurrentPage && setCurrentPage('home')}
-            className="text-sm text-blue-200 hover:text-white transition-colors">
-            &larr; Back to Site
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <button onClick={() => setShowNotifications(v => !v)}
+                className="relative p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-white">
+                <Bell size={18} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F97316] rounded-full text-xs flex items-center justify-center font-bold">{unreadCount}</span>
+                )}
+              </button>
+              {showNotifications && (
+                <AdminNotificationDropdown
+                  notifications={notifications}
+                  onClose={() => setShowNotifications(false)}
+                  onMarkAll={() => setNotifications(n => n.map(x => ({ ...x, read: true })))}
+                />
+              )}
+            </div>
+            <button onClick={() => setCurrentPage && setCurrentPage('home')}
+              className="text-sm text-blue-200 hover:text-white transition-colors">
+              &larr; Back to Site
+            </button>
+          </div>
         </div>
       </div>
 
