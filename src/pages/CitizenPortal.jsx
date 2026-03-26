@@ -23,18 +23,18 @@ function NotificationDropdown({ notifications, onClose, onMarkAll }) {
   const typeColor = { complaint: 'bg-orange-100 text-orange-600', license: 'bg-blue-100 text-blue-600', alert: 'bg-red-100 text-red-600', info: 'bg-green-100 text-green-600' };
 
   return (
-    <div ref={ref} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden max-w-[calc(100vw-2rem)]">
       <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
         <span className="font-bold text-gray-800 text-sm">Notifications</span>
         <button onClick={onMarkAll} className="text-xs text-[#002B7F] font-medium hover:underline">Mark all read</button>
       </div>
       <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
         {notifications.map(n => (
-          <div key={n.id} className={`px-4 py-3 flex gap-3 ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
+          <div key={n.id} className={`px-4 py-3 sm:py-3 flex gap-3 min-h-[44px] ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
             <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-gray-300' : 'bg-[#F97316]'}`} />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-800 truncate">{n.title}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
+              <p className="text-sm font-semibold text-gray-800 truncate">{n.title}</p>
+              <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{n.body}</p>
               <span className={`text-xs font-medium mt-1 inline-block px-1.5 py-0.5 rounded ${typeColor[n.type]}`}>{n.time}</span>
             </div>
           </div>

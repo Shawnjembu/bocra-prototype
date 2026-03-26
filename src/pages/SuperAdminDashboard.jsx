@@ -24,18 +24,18 @@ function SANotificationDropdown({ notifications, onClose, onMarkAll }) {
   }, [onClose]);
   const typeColor = { admin: 'bg-blue-100 text-blue-700', security: 'bg-red-100 text-red-700', system: 'bg-green-100 text-green-700', audit: 'bg-yellow-100 text-yellow-700' };
   return (
-    <div ref={ref} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden max-w-[calc(100vw-2rem)]">
       <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
         <span className="font-bold text-gray-800 text-sm">System Notifications</span>
         <button onClick={onMarkAll} className="text-xs text-[#002B7F] font-medium hover:underline">Mark all read</button>
       </div>
       <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
         {notifications.map(n => (
-          <div key={n.id} className={`px-4 py-3 flex gap-3 ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
+          <div key={n.id} className={`px-4 py-3 sm:py-3 flex gap-3 min-h-[44px] ${n.read ? 'opacity-60' : 'bg-blue-50/40'}`}>
             <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? 'bg-gray-300' : 'bg-red-500'}`} />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-800 truncate">{n.title}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
+              <p className="text-sm font-semibold text-gray-800 truncate">{n.title}</p>
+              <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{n.body}</p>
               <span className={`text-xs font-medium mt-1 inline-block px-1.5 py-0.5 rounded ${typeColor[n.type] || 'bg-gray-100 text-gray-600'}`}>{n.time}</span>
             </div>
           </div>
@@ -492,17 +492,19 @@ function AnalyticsTab() {
       </div>
 
       {/* Active Users by Hour */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
         <h3 className="text-base font-bold text-gray-800 mb-5">Active Users — Today by Hour</h3>
-        <div className="flex items-end gap-2 h-32">
-          {activeUsersByHour.map((v, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-xs font-bold text-gray-500">{v}</span>
-              <div className="w-full rounded-t-lg bg-[#002B7F]"
-                style={{ height: `${(v / maxActive) * 96}px`, opacity: i === 8 ? 1 : 0.55 }} />
-              <span className="text-xs text-gray-400">{hours[i]}</span>
-            </div>
-          ))}
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
+          <div className="flex items-end gap-1 sm:gap-2 h-32 min-w-[600px] px-4 sm:px-0">
+            {activeUsersByHour.map((v, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-xs font-bold text-gray-500">{v}</span>
+                <div className="w-full rounded-t-lg bg-[#002B7F]"
+                  style={{ height: `${(v / maxActive) * 96}px`, opacity: i === 8 ? 1 : 0.55 }} />
+                <span className="text-xs text-gray-400">{hours[i]}</span>
+              </div>
+            ))}
+          </div>
         </div>
         <p className="text-xs text-gray-400 mt-2">Highlighted bar = peak hour today</p>
       </div>

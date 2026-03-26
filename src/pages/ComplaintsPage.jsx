@@ -335,7 +335,7 @@ export default function ComplaintsPage({ setCurrentPage }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Enter Reference Number
                   </label>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <input
                       type="text"
                       value={trackingId}
@@ -345,7 +345,7 @@ export default function ComplaintsPage({ setCurrentPage }) {
                     />
                     <button
                       onClick={handleTrackComplaint}
-                      className="px-6 py-3 bg-[#002B7F] text-white rounded-lg font-medium hover:bg-[#1a4a9e] transition-colors flex items-center gap-2"
+                      className="w-full sm:w-auto px-6 py-3 bg-[#002B7F] text-white rounded-lg font-medium hover:bg-[#1a4a9e] transition-colors flex items-center justify-center gap-2 min-h-[44px]"
                     >
                       <Search size={18} />
                       Track

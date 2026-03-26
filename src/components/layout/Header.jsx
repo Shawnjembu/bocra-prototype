@@ -134,13 +134,13 @@ export default function Header({ currentPage, setCurrentPage }) {
     <header className="sticky top-0 z-50 bg-white shadow-md">
       {/* Top Bar */}
       <div className="bg-[#002B7F] text-white py-2 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center text-sm">
-          <div className="flex items-center gap-4">
-            <span>📞 +267 368 5000</span>
-            <span>✉️ info@bocra.bw</span>
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2 sm:gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4">
+            <span className="whitespace-nowrap">📞 +267 368 5000</span>
+            <span className="whitespace-nowrap">✉️ info@bocra.bw</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span>Monday - Friday: 7:30 AM - 4:30 PM</span>
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4">
+            <span className="whitespace-nowrap">Monday - Friday: 7:30 AM - 4:30 PM</span>
             <button
               onClick={toggleLang}
               className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-white/30 text-xs font-bold hover:bg-white/10 transition-colors"
